@@ -22,8 +22,8 @@ app.set("view engine", "ejs")
 app.use(static)
 
 // Index Route
-app.get("/", function(req, res){
-  res.render("index", { title: "Home" })
+app.get("/", (req, res) => {
+  res.render("index");
 })
 
 /* ***********************
