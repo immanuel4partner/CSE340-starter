@@ -1,3 +1,13 @@
+/* ===== ROOT COLORS (ACCESSIBLE) ===== */
+:root {
+  --primary: #284868;
+  --secondary: #00bcd4;
+  --background: #ffffff;
+  --light-bg: #f4f6f7;
+  --text-dark: #000000;
+  --text-light: #ffffff;
+}
+
 /* ===== RESET ===== */
 *,
 *::before,
@@ -9,13 +19,14 @@ body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   background: #9ca1a3 url("/images/site/checkerboard.jpg");
+  color: var(--text-dark);
 }
 
 /* ===== HEADER ===== */
 #top-header {
-  background: #fff;
+  background: var(--background);
   padding: 1rem;
-  border: 5px solid #00bcd4;
+  border: 5px solid var(--secondary);
   border-bottom: none;
   max-width: 1100px;
   margin: auto;
@@ -31,12 +42,12 @@ body {
   font-size: 1.8rem;
   font-weight: bold;
   text-decoration: none;
-  color: #000;
+  color: var(--text-dark);
 }
 
 .account a {
   text-decoration: none;
-  color: #000;
+  color: var(--text-dark);
 }
 
 /* ===== NAV ===== */
@@ -55,45 +66,18 @@ body {
 }
 
 .main-nav a {
-  color: #fff;
+  color: var(--text-light);
   text-decoration: none;
   font-weight: bold;
 }
 
-/* CTA BUTTON (Own Today) */
-.btn {
-  display: inline-block;
-  background: linear-gradient(135deg, #00bcd4, #0097a7);
-  color: #fff;
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: bold;
-  text-decoration: none;
-  border-radius: 30px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* Hover effect */
-.btn:hover {
-  background: linear-gradient(135deg, #0097a7, #007c91);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Click effect */
-.btn:active {
-  transform: scale(0.98);
-  box-shadow: none;
-}
 /* ===== MAIN CARD ===== */
 .content-card {
   max-width: 1100px;
   margin: auto;
-  background: #fff;
+  background: var(--background);
   padding: 1rem;
-  border: 5px solid #00bcd4;
+  border: 5px solid var(--secondary);
 }
 
 /* ===== HERO ===== */
@@ -104,7 +88,7 @@ body {
 }
 
 .hero-card {
-  color: #00a9c9;
+  color: var(--primary);
 }
 
 .hero-card h2 {
@@ -115,118 +99,91 @@ body {
   padding-left: 1rem;
 }
 
-.hero-card button {
-  background: #00bcd4;
-  border: none;
-  padding: 0.6rem 1rem;
-  color: #000;
+/* CTA BUTTON */
+.btn {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--text-light);
+  padding: 12px 24px;
   font-weight: bold;
-  cursor: pointer;
+  text-decoration: none;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: #1d3557;
+  transform: translateY(-2px);
 }
 
 .hero-image img {
   width: 100%;
 }
 
-/* ===== LOWER SECTION (MOBILE DEFAULT) ===== */
+/* ===== LOWER SECTION (MOBILE FIRST) ===== */
 .lower {
   display: block;
 }
 
 /* ===== REVIEWS ===== */
-.reviews ul {
-  padding-left: 1rem;
-}
-
-/* Ensure Reviews section matches Upgrades height */
 .reviews {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background: #ecefea;
-  /* optional: match upgrade card background */
+  background: var(--light-bg);
   padding: 1rem;
   border-radius: 10px;
-  min-height: 100%;
-  /* will stretch inside parent .lower flex */
 }
 
-/* Make the list take full width like Upgrade cards */
 .review-list {
   list-style: none;
-  padding-left: 0;
+  padding: 0;
   margin: 0;
 }
 
 .review-list li {
   background: #fff;
+  color: #000;
   padding: 0.8rem;
   margin-bottom: 0.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
 }
+
 /* ===== UPGRADES ===== */
 .upgrade-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
 }
 
-.upgrade-card {
-  background: #00bcd4;
-  padding: 0.5rem;
-  text-align: center;
-}
-
-.upgrade-card img {
-  width: 80px;
-  background: #fff;
-  padding: 0.3rem;
-}
-
-.upgrade-card a {
-  display: block;
-  color: blue;
-  margin-top: 0.5rem;
-}
-
-/* Upgrade cards layout */
 .upgrade-card {
   display: flex;
   flex-direction: column;
-  /* stack image above text */
   align-items: center;
-  /* center horizontally */
+  justify-content: space-between;
   text-decoration: none;
-  background: #00bcd4;
+  background: var(--secondary);
   padding: 10px;
   border-radius: 10px;
+  height: 200px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Image styling */
 .upgrade-card img {
   width: 80px;
-  height: auto;
-  margin-bottom: 8px;
-  /* space between image and text */
   background: #fff;
   padding: 0.3rem;
   border-radius: 5px;
 }
 
-/* Text styling */
 .upgrade-card span {
-  color: #284868;
+  color: #000;
   font-weight: bold;
   text-align: center;
 }
 
-/* Hover effect */
 .upgrade-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
+
 /* ===== FOOTER ===== */
 footer {
   max-width: 1100px;
@@ -247,11 +204,12 @@ footer {
 
   .hero-card {
     position: absolute;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
     padding: 1rem;
+    border-radius: 10px;
   }
 
-  /* FIXED LOWER SECTION */
+  /* LOWER SECTION SIDE-BY-SIDE */
   .lower {
     display: flex;
     justify-content: space-between;
@@ -264,14 +222,17 @@ footer {
     flex: 1;
   }
 
-  /* ORDER CONTROL */
+  /* ORDER: upgrades left, reviews right */
   .upgrades {
     order: 1;
-    /* LEFT */
   }
 
   .reviews {
     order: 2;
-    /* RIGHT */
+  }
+
+  /* Upgrade grid desktop */
+  .upgrade-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
