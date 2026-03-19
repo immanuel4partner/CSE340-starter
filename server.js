@@ -6,19 +6,21 @@
 /* ***********************
  * Require Statements
  *************************/
+
 const express = require("express")
 require("dotenv").config()
 const app = express()
 const static = require("./routes/static")
-
-// ADD THESE 👇
 const path = require("path")
+
+/* ✅ STATIC FILES (VERY IMPORTANT) */
+app.use(express.static(path.join(__dirname, "public")))
+
+/* VIEW ENGINE */
 app.set("views", path.join(__dirname, "views"))
 app.set("view engine", "ejs")
 
-/* ***********************
- * Routes
- *************************/
+/* ROUTES */
 app.use(static)
 
 // Index Route
@@ -26,15 +28,9 @@ app.get("/", (req, res) => {
   res.render("index");
 })
 
-/* ***********************
- * Local Server Information
- *************************/
-const port = process.env.PORT || 3000  
-const host = process.env.HOST || "localhost"
+/* SERVER */
+const port = process.env.PORT || 3000;
 
-/* ***********************
- * Start Server
- *************************/
 app.listen(port, () => {
-  console.log(`Server running at http://${host}:${port}`)
+  console.log(`Server running on port ${port}`)
 })
