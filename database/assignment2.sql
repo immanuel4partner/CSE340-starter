@@ -1,6 +1,5 @@
 --assignment2.sql Using Query Tool to run all seperately
 
-
 -- 1. Insert Tony Stark
 INSERT INTO public.account (
         account_firstname,
