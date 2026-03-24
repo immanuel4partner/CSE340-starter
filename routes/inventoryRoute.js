@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const invCont = require("../controllers/invController");
+const utilities = require("../utilities");
 
-// Route: /inv/type/:classificationId
-router.get("/type/:classificationId", invCont.buildByClassificationId);
+// classification view
+router.get("/type/:classificationId", utilities.handleErrors(invCont.buildByClassificationId));
+
+// vehicle detail view
+router.get("/detail/:invId", utilities.handleErrors(invCont.buildDetailView));
 
 module.exports = router;
