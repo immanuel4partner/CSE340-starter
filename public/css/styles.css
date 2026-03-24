@@ -15,11 +15,18 @@
   box-sizing: border-box;
 }
 
+/* ===== BODY ===== */
+/* Default background for all pages: clean white */
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: #9ca1a3 url("/images/site/checkerboard.jpg");
+  background: var(--background);
   color: var(--text-dark);
+}
+
+/* Home page checkerboard */
+body.home {
+  background: #9ca1a3 url("/images/site/checkerboard.jpg") repeat;
 }
 
 /* ===== HEADER ===== */
@@ -50,45 +57,62 @@ body {
   color: var(--text-dark);
 }
 
-/* ===== NAV ===== */
+/* ===== NAVIGATION ===== */
 .main-nav {
-  background: #222;
+  background: #000;
+  padding: 0.5rem 0;
   max-width: 1100px;
-  margin: auto;
+  margin: 0 auto;
 }
 
 .main-nav ul {
-  display: flex;
-  justify-content: space-around;
-  padding: 0.75rem;
-  margin: 0;
   list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
-.main-nav a {
-  color: var(--text-light);
+.main-nav ul li a {
+  display: block;
+  background: #000;
+  color: #fff;
   text-decoration: none;
   font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-/* ===== MAIN CARD ===== */
-.content-card {
-  max-width: 1100px;
-  margin: auto;
-  background: var(--background);
-  padding: 1rem;
-  border: 5px solid var(--secondary);
+.main-nav ul li a:hover {
+  background: #444;
+  transform: translateY(-2px);
 }
 
 /* ===== HERO ===== */
 .hero {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 1rem;
+  position: relative;
 }
 
 .hero-card {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
   color: var(--primary);
+  z-index: 2;
 }
 
 .hero-card h2 {
@@ -99,7 +123,13 @@ body {
   padding-left: 1rem;
 }
 
-/* CTA BUTTON */
+.hero-card img,
+.hero-image img {
+  width: 100%;
+  height: auto;
+}
+
+/* ===== CTA BUTTON ===== */
 .btn {
   display: inline-block;
   background: var(--primary);
@@ -116,11 +146,16 @@ body {
   transform: translateY(-2px);
 }
 
-.hero-image img {
-  width: 100%;
+/* ===== MAIN CARD ===== */
+.content-card {
+  max-width: 1100px;
+  margin: auto;
+  background: var(--background);
+  padding: 1rem;
+  border: 5px solid var(--secondary);
 }
 
-/* ===== LOWER SECTION (MOBILE FIRST) ===== */
+/* ===== LOWER SECTION ===== */
 .lower {
   display: block;
 }
@@ -184,6 +219,22 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
+body.home .lower {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+body.home .upgrades {
+  flex: 1;
+  order: 1;
+}
+
+body.home .reviews {
+  flex: 1;
+  order: 2;
+}
+
 /* ===== FOOTER ===== */
 footer {
   max-width: 1100px;
@@ -194,22 +245,153 @@ footer {
   font-size: 0.9rem;
 }
 
-/* ===== DESKTOP ===== */
-@media screen and (min-width: 768px) {
+/* ===== INVENTORY GRID ===== */
+#inv-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 2rem auto;
+  justify-items: center;
+}
 
+#inv-display li {
+  width: 100%;
+  max-width: 280px;
+  background: #f4f6f7;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+}
+
+#inv-display li:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+#inv-display li:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+#inv-display li:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+#inv-display li:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+#inv-display li:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#inv-display li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(145deg, #ffffff, #f5f8ff);
+}
+
+#inv-display li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-20deg);
+  transition: 0.6s;
+}
+
+#inv-display li:hover::before {
+  left: 130%;
+}
+
+#inv-display img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.4s ease;
+}
+
+#inv-display li:hover img {
+  transform: scale(1.05);
+}
+
+#inv-display h2 {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+#inv-display span {
+  display: block;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+/* ===== DETAIL PAGE ===== */
+body.detail-page {
+  background: var(--background);
+}
+
+.detail-card {
+  max-width: 1100px;
+  margin: 2rem auto;
+  background: var(--background);
+  padding: 1rem;
+  border: 5px solid var(--secondary);
+  border-radius: 10px;
+}
+
+.detail-card-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-image img {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.detail-info h2 {
+  margin-top: 0.5rem;
+  color: var(--primary);
+}
+
+.detail-info p {
+  margin: 0.3rem 0;
+}
+
+/* ===== DESKTOP LAYOUT ===== */
+@media screen and (min-width: 768px) {
   .hero {
     flex-direction: row;
     align-items: center;
   }
 
   .hero-card {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 1rem;
-    border-radius: 10px;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
-  /* LOWER SECTION SIDE-BY-SIDE */
   .lower {
     display: flex;
     justify-content: space-between;
@@ -222,17 +404,69 @@ footer {
     flex: 1;
   }
 
-  /* ORDER: upgrades left, reviews right */
-  .upgrades {
-    order: 1;
-  }
-
-  .reviews {
-    order: 2;
-  }
-
-  /* Upgrade grid desktop */
   .upgrade-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+
+  .detail-card-inner {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .detail-image {
+    flex: 1;
+  }
+
+  .detail-info {
+    flex: 1;
+  }
+}
+
+/* ===== MOBILE LAYOUT ===== */
+@media screen and (max-width: 768px) {
+  #inv-display {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 500px) {
+  #inv-display {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card {
+    width: 90%;
+  }
+
+  /* ===== LOWER SECTION (HOME PAGE) ===== */
+body.home .lower {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+}
+
+/* Force Upgrades to the left and Reviews to the right */
+body.home .upgrades {
+  order: 1; /* left */
+  flex: 1;  /* take equal space */
+}
+
+body.home .reviews {
+  order: 2; /* right */
+  flex: 1;  /* take equal space */
+}
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width: 768px) {
+  body.home .lower {
+    flex-direction: column; /* stack on mobile */
+  }
+
+  body.home .upgrades,
+  body.home .reviews {
+    order: initial; /* restore natural order */
+  }
+}
 }
