@@ -1,7 +1,7 @@
 const pool = require("../database/")
 
 /* ***************************
- *  Get all classification data
+ * Get all classification data
  * ************************** */
 async function getClassifications() {
   try {
@@ -17,7 +17,7 @@ async function getClassifications() {
 
 
 /* ***************************
- *  Get inventory by classification_id
+ * Get inventory by classification_id
  * ************************** */
 async function getInventoryByClassificationId(classification_id) {
   try {
@@ -37,7 +37,7 @@ async function getInventoryByClassificationId(classification_id) {
 
 
 /* ***************************
- *  Get single vehicle by inv_id
+ * Get single vehicle by inv_id
  * ************************** */
 async function getInventoryById(inv_id) {
   try {
@@ -57,7 +57,7 @@ async function getInventoryById(inv_id) {
 
 
 /* ***************************
- *  Export functions
+ * Export functions
  * ************************** */
 module.exports = {
   getClassifications,

@@ -1,22 +1,20 @@
 const invModel = require("../models/inventory-model");
-const utilities = require("../utilities/");
+const Util = require("../utilities");
 
 const invCont = {};
 
-/* ***************************
- *  Build inventory by classification view
- * ************************** */
-invCont.buildByClassificationId = async function (req, res, next) {
+/* ===== BUILD CLASSIFICATION PAGE ===== */
+invCont.buildByClassificationId = async (req, res, next) => {
   try {
     const classification_id = req.params.classificationId;
-
     const data = await invModel.getInventoryByClassificationId(classification_id);
-    const grid = await utilities.buildClassificationGrid(data);
-    const nav = await utilities.getNav();
-    const className = data[0].classification_name;
+
+    const grid = await Util.buildClassificationGrid(data);
+    const nav = await Util.getNav();
+    const className = data[0]?.classification_name || "Vehicles";
 
     res.render("inventory/classification", {
-      title: className + " vehicles",
+      title: className + " Vehicles",
       nav,
       grid,
     });
@@ -25,28 +23,36 @@ invCont.buildByClassificationId = async function (req, res, next) {
   }
 };
 
-
-/* ***************************
- *  Build inventory detail view
- * ************************** */
-invCont.buildDetailView = async function (req, res, next) {
+/* ===== BUILD VEHICLE DETAIL PAGE ===== */
+invCont.buildDetailView = async (req, res, next) => {
   try {
     const inv_id = req.params.invId;
+    const vehicle = await invModel.getInventoryById(inv_id);
 
-    const data = await invModel.getVehicleById(inv_id);
-    const nav = await utilities.getNav();
-    const vehicleHtml = await utilities.buildVehicleDetailHtml(data);
+    if (!vehicle) {
+      return res.render("inventory/detail", {
+        title: "Vehicle Not Found",
+        nav: await Util.getNav(),
+        detailHtml: "<p class='notice'>Sorry, vehicle details could not be found.</p>",
+      });
+    }
+
+    const nav = await Util.getNav();
+    const detailHtml = Util.buildVehicleDetail(vehicle);
 
     res.render("inventory/detail", {
-      title: `${data.inv_make} ${data.inv_model}`,
+      title: `${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
       nav,
-      vehicleHtml,
-      vehicle: data
+      detailHtml,
     });
   } catch (error) {
     next(error);
   }
 };
 
+/* ===== INTENTIONAL ERROR (500) ===== */
+invCont.triggerError = (req, res, next) => {
+  throw new Error("Intentional Server Error");
+};
 
 module.exports = invCont;

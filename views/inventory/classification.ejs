@@ -1,9 +1,26 @@
-<% if (title) { %>
-<h1><%= title %></h1>
-<% } else {
-  res.redirect('/')
-} %>
+<!DOCTYPE html>
+<html lang="en">
 
-<%# messages() %>
+  <body class="classification-page">
 
-<%- grid %>
+    <main>
+      <!-- Page Title -->
+      <% if (title) { %>
+      <section class="page-title-card">
+        <h1><%= title %></h1>
+      </section>
+      <% } else { %>
+      <% res.redirect('/') %>
+      <% } %>
+
+      <!-- Classification Grid -->
+      <section class="classification-grid">
+        <%- grid %>
+      </section>
+    </main>
+
+    <%- include("../partials/footer") %>
+
+  </body>
+
+</html>

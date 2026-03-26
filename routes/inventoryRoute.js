@@ -1,12 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const invCont = require("../controllers/invController");
+const invController = require("../controllers/invController");
 const utilities = require("../utilities");
 
-// classification view
-router.get("/type/:classificationId", utilities.handleErrors(invCont.buildByClassificationId));
+/* ===== CLASSIFICATION ROUTE ===== */
+router.get(
+  "/type/:classificationId",
+  utilities.handleErrors(invController.buildByClassificationId)
+);
 
-// vehicle detail view
-router.get("/detail/:invId", utilities.handleErrors(invCont.buildDetailView));
+/* ===== VEHICLE DETAIL ROUTE ===== */
+router.get(
+  "/detail/:invId",
+  utilities.handleErrors(invController.buildDetailView)
+);
+
+/* ===== TRIGGER ERROR ROUTE ===== */
+router.get(
+  "/trigger-error",
+  utilities.handleErrors(invController.triggerError)
+);
 
 module.exports = router;

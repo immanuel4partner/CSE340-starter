@@ -1,44 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
 
-    <%- include("./partials/head") %>
 
-    <body class="detail-page">
-        <%- include("./partials/header") %>
-        <%- include("./partials/nav") %>
+<main class="detail-page">
 
-        <section class="page-title-card">
-            <h1><%= title %></h1>
-        </section>
+    <!-- Page Title -->
+    <section class="page-title-card">
+        <h1><%= title %></h1>
+    </section>
 
-        <section class="detail-card">
-            <div class="detail-card-inner">
-                <!-- Vehicle Image -->
-                <div class="detail-image">
-                    <img src="<%= vehicle.inv_image %>"
-                         alt="Image of <%= vehicle.inv_make %> <%= vehicle.inv_model %>">
-                </div>
+    <!-- Vehicle Detail Section -->
+    <section class="detail-card">
+        <div class="detail-card-inner">
+            <%- detailHtml %> <!-- Renders Year, Make, Model, Price, Mileage, Color, Classification, Description -->
+        </div>
+    </section>
 
-                <!-- Vehicle Info -->
-                <div class="detail-info">
-                    <%- detailHtml %>
+</main>
 
-                    <h2>
-                        <%= vehicle.inv_year %>
-                        <%= vehicle.inv_make %>
-                        <%= vehicle.inv_model %>
-                    </h2>
-
-                    <p><strong>Price:</strong> $<%= new Intl.NumberFormat("en-US").format(vehicle.inv_price) %></p>
-                    <p><strong>Miles:</strong> <%= new Intl.NumberFormat("en-US").format(vehicle.inv_miles) %></p>
-                    <p><strong>Color:</strong> <%= vehicle.inv_color %></p>
-
-                    <p><%= vehicle.inv_description %></p>
-                </div>
-            </div>
-        </section>
-
-        <%- include("./partials/footer") %>
-    </body>
-
-</html>
