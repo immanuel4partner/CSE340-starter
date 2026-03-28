@@ -51,7 +51,7 @@ invCont.buildDetailView = async (req, res, next) => {
 };
 
 /* ===== INTENTIONAL ERROR (500) ===== */
-invCont.triggerError = (req, res, next) => {
+invCont.triggerError = async (req, res, next) => {
   throw new Error("Intentional Server Error");
 };
 
