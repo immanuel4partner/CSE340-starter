@@ -2,10 +2,13 @@
  * Require Statements
  *************************/
 const express = require("express")
+const session = require('express-session');
 require("dotenv").config()
 const app = express()
 const path = require("path")
 const expressLayouts = require("express-ejs-layouts")
+
+const pool = require("./database/") 
 
 const staticRoutes = require("./routes/static")
 const baseController = require("./controllers/baseController")
@@ -31,6 +34,44 @@ app.use((req, res, next) => {
 app.set("view engine", "ejs")
 app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
+
+/* **********************
+ * Middleware 
+ *************************/
+// Unit 4 Activity
+
+app.use(express.static("public"))
+app.use(session({
+  store: new (require("connect-pg-simple")(session))({
+    createTableIfMissing: true,
+    pool,
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  name: "sessionId",
+}))
+
+
+// Express Messages Middleware
+app.use(require("connect-flash")())
+app.use((req, res, next) => {
+  res.locals.flash = {
+    success: req.flash("success"),
+    error: req.flash("error"),
+    info: req.flash("info"),
+  }
+  next()
+})
+
+
+// Unit 4 Activity
+// Express Messages Middleware
+app.use(require("connect-flash")())
+app.use(function (req, res, next) {
+  res.locals.messages = require("express-messages")(req, res)
+  next()
+})
 
 /* ***********************
  * Routes

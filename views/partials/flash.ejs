@@ -1,0 +1,10 @@
+<!-- messages.ejs -->
+<div id="messages">
+  <% if (messages) { %>
+    <% Object.keys(messages).forEach(function(type) { %>
+      <% messages[type].forEach(function(msg) { %>
+        <div class="flash flash--<%= type %>"><%= msg %></div>
+      <% }) %>
+    <% }) %>
+  <% } %>
+</div>
