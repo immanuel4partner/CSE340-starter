@@ -365,6 +365,8 @@ footer {
   font-weight: 600;
 }
 
+
+
 .flash--success {
   background: #e9f7ee;
   border-color: #2a7a44;
@@ -421,4 +423,241 @@ footer {
   .hero-card {
     width: 90%;
   }
+}
+/* ===== LOGIN / AUTH PAGE ===== */
+.auth-wrapper {
+  max-width: 400px;
+  /* keeps form narrow */
+  margin: 2rem auto;
+  /* center horizontally */
+  padding: 2rem;
+  background: var(--background);
+  border: 5px solid var(--secondary);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-header h1 {
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.form-note {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.account-form label {
+  display: block;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.account-form input[type="email"],
+.account-form input[type="password"] {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.password-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.password-field input {
+  flex: 1;
+}
+
+.toggle-password {
+  background: #ddd;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.toggle-password:hover {
+  background: #ccc;
+}
+
+.password-help {
+  background: var(--light-bg);
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.password-help .password-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.password-help .password-rules {
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.password-help .password-rules li {
+  margin-bottom: 0.3rem;
+}
+
+.account-form button[type="submit"] {
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 1.5rem;
+  background: var(--primary);
+  color: var(--text-light);
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.account-form button[type="submit"]:hover {
+  background: #1d3557;
+}
+
+.account-alt {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.account-alt a.auth-link {
+  color: var(--secondary);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.account-alt a.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 500px) {
+  .auth-wrapper {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .password-field {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .toggle-password {
+    width: 100%;
+  }
+
+    /* ===== ACCOUNT LOGIN FORM ===== */
+    .auth-wrapper {
+      max-width: 400px;
+      /* keeps form narrow on mobile */
+      margin: 2rem auto;
+      padding: 1.5rem;
+      border: 2px solid var(--secondary);
+      border-radius: 10px;
+      background: var(--background);
+    }
+  
+    .auth-header h1 {
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+  
+    .account-form label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  
+    .account-form input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  
+    .password-field {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  
+    .password-field input {
+      flex: 1;
+    }
+  
+    .password-field .toggle-password {
+      padding: 0.3rem 0.6rem;
+      border: none;
+      background: var(--secondary);
+      color: var(--text-light);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  
+    .password-help {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+  
+    .account-form button[type="submit"] {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.7rem;
+      background: var(--primary);
+      color: var(--text-light);
+      font-weight: bold;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+    }
+  
+    .account-form button[type="submit"]:hover {
+      background: #1d3557;
+    }
+  
+    .account-alt {
+      margin-top: 1rem;
+      text-align: center;
+    }
+  
+    .account-alt a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+  
+    .account-alt a:hover {
+      text-decoration: underline;
+    }
+  
+    /* ===== DESKTOP LAYOUT ===== */
+    @media (min-width: 768px) {
+      .auth-wrapper {
+        max-width: 500px;
+        /* wider form for desktop */
+        padding: 2rem;
+      }
+  
+      .auth-header h1 {
+        font-size: 2rem;
+      }
+  
+      .password-help {
+        font-size: 0.9rem;
+      }
+    }
 }
