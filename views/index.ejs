@@ -1,37 +1,38 @@
-<main class="page-shell">
+<div class="page-shell">
     <div class="content-card">
 
+        <!-- Only one H1 per page -->
         <h1 class="home-title">Welcome to CSE Motors!</h1>
 
-       <%# Unit Activity%>
-
-       <%- messages () %>
-       
-        <!-- HERO -->
-        <section class="hero">
+        <!-- HERO SECTION -->
+        <section class="hero"
+                 aria-labelledby="hero-title">
             <div class="hero-card">
-                <h2 class="hero-vehicle">DMC Delorean</h2>
+                <h2 id="hero-title"
+                    class="hero-vehicle">DMC Delorean</h2>
                 <ul class="hero-features">
                     <li>3 Cup holders</li>
                     <li>Superman doors</li>
                     <li>Fuzzy dice!</li>
                 </ul>
                 <a href="#"
-                   class="btn">Own Today</a>
+                   class="btn"
+                   aria-label="Own the DMC Delorean today">Own Today</a>
             </div>
 
             <div class="hero-image">
                 <img src="/images/vehicles/delorean.jpg"
-                     alt="DMC Delorean car">
+                     alt="DMC Delorean car parked outside">
             </div>
         </section>
 
-        <!-- LOWER -->
+        <!-- LOWER SECTION -->
         <section class="lower">
 
             <!-- REVIEWS -->
-            <section class="reviews">
-                <h2>DMC Delorean Reviews</h2>
+            <section class="reviews"
+                     aria-labelledby="reviews-title">
+                <h2 id="reviews-title">DMC Delorean Reviews</h2>
                 <ul class="review-list">
                     <li>"So fast it's almost like traveling in time." (4/5)</li>
                     <li>"Coolest ride on the road." (4/5)</li>
@@ -42,38 +43,47 @@
             </section>
 
             <!-- UPGRADES -->
-            <section class="upgrades">
-                <h2>Delorean Upgrades</h2>
-
+            <section class="upgrades"
+                     aria-labelledby="upgrades-title">
+                <h2 id="upgrades-title">Delorean Upgrades</h2>
                 <div class="upgrade-grid">
+
                     <a href="#"
-                       class="upgrade-card">
+                       class="upgrade-card"
+                       aria-label="Flux Capacitor upgrade">
                         <img src="/images/upgrades/flux-cap.png"
                              alt="Flux Capacitor upgrade">
                         <span>Flux Capacitor</span>
                     </a>
+
                     <a href="#"
-                       class="upgrade-card">
+                       class="upgrade-card"
+                       aria-label="Flame Decals upgrade">
                         <img src="/images/upgrades/flame.jpg"
                              alt="Flame Decals upgrade">
                         <span>Flame Decals</span>
                     </a>
+
                     <a href="#"
-                       class="upgrade-card">
+                       class="upgrade-card"
+                       aria-label="Bumper Stickers upgrade">
                         <img src="/images/upgrades/bumper_sticker.jpg"
                              alt="Bumper Stickers upgrade">
                         <span>Bumper Stickers</span>
                     </a>
+
                     <a href="#"
-                       class="upgrade-card">
+                       class="upgrade-card"
+                       aria-label="Hub Caps upgrade">
                         <img src="/images/upgrades/hub-cap.jpg"
                              alt="Hub Caps upgrade">
                         <span>Hub Caps</span>
                     </a>
+
                 </div>
             </section>
 
         </section>
 
     </div>
-</main>
+</div>

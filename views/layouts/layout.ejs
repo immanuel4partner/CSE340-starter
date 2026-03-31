@@ -1,50 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1.0" />
-        <meta name="description"
-              content="Browse our vehicle inventory at CSE Motos, View detailed information including pricing, mileage, and specifications.">
-        <title>
-            <%= title %> | CSE 340 App
-        </title>
-        <link rel="stylesheet"
-              href="/css/styles.css" />
-    </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+        content="Browse our vehicle inventory at CSE Motors. View detailed information including pricing, mileage, and specifications.">
+  <title><%= title %> | CSE 340 App</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
 
-    <body class="<%= typeof pageClass !== 'undefined' ? pageClass : '' %>">
-        <div class="page-shell">
+<body class="<%= typeof pageClass !== 'undefined' ? pageClass : '' %>">
+  <div class="page-shell">
 
-            <header id="top-header">
-                <div class="header-inner">
-                    <div class="siteName">
-                        <a href="/"
-                           title="Home page">CSE Motors</a>
-                    </div>
-                    <div class="account">
-                        <a href="/account"
-                           title="My account">My Account</a>
-                    </div>
-                </div>
-            </header>
-
-            <nav class="main-nav"
-                 aria-label="Primary navigation">
-                <%- locals.nav || "" %>
-            </nav>
-
-            <main>
-                <%- body %>
-            </main>
-
-            <!-- Footer replaced with your partial so Trigger 500 Error shows -->
-            <footer>
-                <%- include("../partials/footer") %>
-            </footer>
-
+    <!-- HEADER -->
+    <header id="top-header">
+      <div class="header-inner">
+        <div class="siteName">
+          <a href="/" title="Home page">CSE Motors</a>
         </div>
-    </body>
+        <div class="account">
+          <a href="/account" title="My account">My Account</a>
+        </div>
+      </div>
+    </header>
 
+    <!-- NAVIGATION -->
+    <nav class="main-nav" aria-label="Primary navigation">
+      <%- locals.nav || "" %>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    <%- include("../partials/flash") %>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+      <%- body %>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer" role="contentinfo">
+      <%- include("../partials/footer") %>
+    </footer>
+
+  </div>
+</body>
 </html>

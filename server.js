@@ -2,19 +2,24 @@
  * Require Statements
  *************************/
 const express = require("express")
-const session = require('express-session');
+const session = require("express-session")
 require("dotenv").config()
 const app = express()
 const path = require("path")
 const expressLayouts = require("express-ejs-layouts")
-
 const pool = require("./database/") 
-
 const staticRoutes = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const accountRoute = require("./routes/accountRoute")
 const utilities = require("./utilities/")
+const flash = require("connect-flash")
+const bodyParser = require("body-parser")
+/* ***********************
+ * Middleware to parse POST data
+ *************************/
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 /* ***********************
  * Static Files
@@ -36,41 +41,25 @@ app.set("view engine", "ejs")
 app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
 
-/* **********************
- * Middleware 
+/* ***********************
+ * Session and Flash Setup
  *************************/
-// Unit 4 Activity
-
-app.use(express.static("public"))
 app.use(session({
   store: new (require("connect-pg-simple")(session))({
     createTableIfMissing: true,
     pool,
   }),
   secret: process.env.SESSION_SECRET,
-  resave: true,
+  resave: false,
   saveUninitialized: true,
   name: "sessionId",
 }))
 
+app.use(flash())
 
-// Express Messages Middleware
-app.use(require("connect-flash")())
+// Make flash messages available to all views
 app.use((req, res, next) => {
-  res.locals.flash = {
-    success: req.flash("success"),
-    error: req.flash("error"),
-    info: req.flash("info"),
-  }
-  next()
-})
-
-
-// Unit 4 Activity
-// Express Messages Middleware
-app.use(require("connect-flash")())
-app.use(function (req, res, next) {
-  res.locals.messages = require("express-messages")(req, res)
+  res.locals.messages = req.flash()
   next()
 })
 
@@ -78,28 +67,22 @@ app.use(function (req, res, next) {
  * Routes
  *************************/
 app.use(staticRoutes)
-
 app.use("/account", accountRoute)
-
+app.use("/inv", inventoryRoute)
 app.get("/", utilities.handleErrors(baseController.buildHome))
 
-app.use("/inv", inventoryRoute)
-
-
-
 /* **********************
- * File not found route - must be last route
+ * 404 - File not found route
  *************************/
 app.use((req, res, next) => {
   next({ status: 404, message: "Sorry, we appear to have lost that page." })
 })
 
-/* ************************
+/* ***********************
  * Express Error Handler
- ***************************/
+ *************************/
 app.use(async (err, req, res, next) => {
   let nav = await utilities.getNav()
-
   console.error(`Error at: "${req.originalUrl}": ${err.message}`)
 
   let message =
@@ -118,7 +101,6 @@ app.use(async (err, req, res, next) => {
  * Local Server Information
  *************************/
 const port = process.env.PORT || 5500
-
 app.listen(port, "0.0.0.0", () => {
   console.log(`app listening on port ${port}`)
 })

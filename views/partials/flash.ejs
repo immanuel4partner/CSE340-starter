@@ -1,10 +1,11 @@
-<!-- messages.ejs -->
-<div id="messages">
+<div id="messages"
+     role="alert"
+     aria-live="polite">
   <% if (messages) { %>
-    <% Object.keys(messages).forEach(function(type) { %>
-      <% messages[type].forEach(function(msg) { %>
-        <div class="flash flash--<%= type %>"><%= msg %></div>
-      <% }) %>
-    <% }) %>
+  <% Object.keys(messages).forEach(function(type) { %>
+  <% messages[type].forEach(function(msg) { %>
+  <div class="flash flash--<%= type %>"><%= msg %></div>
+  <% }) %>
+  <% }) %>
   <% } %>
 </div>
