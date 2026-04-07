@@ -1,0 +1,133 @@
+<div class="auth-wrapper inv-form-card">
+
+    <!-- MATCH LOGIN HEADER -->
+    <div class="auth-header">
+        <h1><%= title %></h1>
+
+        <% if (flash && flash.notice && flash.notice.length > 0) { %>
+        <div class="notice"><%= flash.notice[0] %></div>
+        <% } %>
+
+        <% if (flash && flash.error && flash.error.length > 0) { %>
+        <div class="flash flash--error"><%= flash.error[0] %></div>
+        <% } %>
+
+        <% if (errors && errors.length > 0) { %>
+        <ul class="notice">
+            <% errors.forEach(e => { %>
+            <li><%= e.msg %></li>
+            <% }) %>
+        </ul>
+        <% } %>
+
+        <p class="form-note">
+            <span class="required">*</span> All fields are required.
+        </p>
+    </div>
+
+    <!-- FORM (MATCH LOGIN CLASS) -->
+    <form action="/inv/add-inventory"
+          method="post"
+          class="account-form">
+
+        <div class="inv-form-grid">
+
+            <div class="form-field">
+                <label for="classification_id">Classification</label>
+                <%- typeof classificationSelect !== "undefined"
+                    ? classificationSelect
+                    : "<option disabled>No classifications</option>" %>
+            </div>
+
+            <div class="form-field">
+                <label for="inv_make">Make</label>
+                <input type="text"
+                       id="inv_make"
+                       name="inv_make"
+                       required
+                       value="<%= inv_make || '' %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_model">Model</label>
+                <input type="text"
+                       id="inv_model"
+                       name="inv_model"
+                       required
+                       value="<%= inv_model || '' %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_year">Year</label>
+                <input type="number"
+                       id="inv_year"
+                       name="inv_year"
+                       required
+                       min="1900"
+                       max="<%= new Date().getFullYear() %>"
+                       value="<%= inv_year || '' %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_description">Description</label>
+                <textarea id="inv_description"
+                          name="inv_description"
+                          required><%= inv_description || '' %></textarea>
+            </div>
+
+            <div class="form-field">
+                <label for="inv_image">Image Path</label>
+                <input type="text"
+                       id="inv_image"
+                       name="inv_image"
+                       required
+                       value="<%= inv_image || '/images/vehicles/no-image.png' %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_thumbnail">Thumbnail Path</label>
+                <input type="text"
+                       id="inv_thumbnail"
+                       name="inv_thumbnail"
+                       required
+                       value="<%= inv_thumbnail || '/images/vehicles/no-image.png' %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_price">Price</label>
+                <input type="number"
+                       step="0.01"
+                       id="inv_price"
+                       name="inv_price"
+                       required
+                       value="<%= inv_price || '' %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_miles">Miles</label>
+                <input type="number"
+                       id="inv_miles"
+                       name="inv_miles"
+                       required
+                       min="0"
+                       value="<%= inv_miles || '' %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_color">Color</label>
+                <input type="text"
+                       id="inv_color"
+                       name="inv_color"
+                       required
+                       value="<%= inv_color || '' %>">
+            </div>
+
+        </div>
+
+        <div class="inv-form-actions">
+            <button type="submit">Add Inventory</button>
+        </div>
+
+    </form>
+
+</div>

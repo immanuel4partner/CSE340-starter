@@ -3,6 +3,12 @@ const router = express.Router()
 const accountController = require("../controllers/accountController")
 const utilities = require("../utilities")
 
+
+// Route for /account (redirects to login)
+router.get("/", (req, res) => {
+  return res.redirect("/account/login");
+});
+
 // ==============================
 // GET Routes (Display Views)
 // ==============================

@@ -4,9 +4,11 @@ const Util = {};
 
 /* ===== NAVIGATION ===== */
 Util.getNav = async function () {
-  const data = await invModel.getClassifications();
+  const data = await invModel.getClassifications(); // ✅ already an array
+
   let list = "<ul>";
   list += '<li><a href="/">Home</a></li>';
+
   data.forEach((row) => {
     list += `<li>
       <a href="/inv/type/${row.classification_id}">
@@ -14,7 +16,29 @@ Util.getNav = async function () {
       </a>
     </li>`;
   });
+
   list += "</ul>";
+  return list;
+};
+
+/* ===== CLASSIFICATION SELECT LIST ===== */
+Util.buildClassificationList = async function (classification_id = null) {
+  const data = await invModel.getClassifications(); // ✅ array
+
+  let list = '<select name="classification_id" id="classificationList" required>';
+  list += '<option value="">Choose a Classification</option>';
+
+  data.forEach((row) => {
+    list += `<option value="${row.classification_id}"`;
+
+    if (classification_id != null && row.classification_id == classification_id) {
+      list += " selected";
+    }
+
+    list += `>${row.classification_name}</option>`;
+  });
+
+  list += "</select>";
   return list;
 };
 
@@ -25,6 +49,7 @@ Util.buildClassificationGrid = async function (data) {
   }
 
   let grid = '<ul id="inv-display">';
+
   data.forEach((vehicle) => {
     grid += `<li>
       <a href="/inv/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model}">
@@ -40,6 +65,7 @@ Util.buildClassificationGrid = async function (data) {
       </div>
     </li>`;
   });
+
   grid += "</ul>";
   return grid;
 };

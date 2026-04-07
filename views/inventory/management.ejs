@@ -1,0 +1,61 @@
+<section class="management-card">
+    <h1><%= title %></h1>
+
+    <!-- ✅ SAFE FLASH HANDLING -->
+    <% if (typeof flash !== "undefined" && flash.notice && flash.notice.length > 0) { %>
+    <div class="notice"><%= flash.notice[0] %></div>
+    <% } %>
+
+    <% if (typeof flash !== "undefined" && flash.error && flash.error.length > 0) { %>
+    <div class="flash flash--error"><%= flash.error[0] %></div>
+    <% } %>
+
+    <!-- ✅ PRIMARY ACTION BUTTONS -->
+    <div class="management-actions">
+        <a class="management-btn"
+           href="/inv/add-classification">
+            ➕ Add New Classification
+        </a>
+        <a class="management-btn"
+           href="/inv/add-inventory">
+            🚗 Add New Vehicle
+        </a>
+    </div>
+
+    <!-- ✅ SECTION HEADER -->
+    <h2>Manage Inventory</h2>
+    <p class="management-lead">
+        Select a classification to see the inventory items in that classification.
+    </p>
+
+    <!-- ✅ SAFE DROPDOWN RENDER -->
+    <div class="management-select">
+        <%- (typeof classificationSelect !== "undefined" && classificationSelect) ? classificationSelect : "" %>
+    </div>
+
+    <!-- ✅ INVENTORY TABLE -->
+    <table id="inventoryDisplay">
+        <!-- JS will populate this -->
+    </table>
+
+    <noscript>JavaScript must be enabled to use this page.</noscript>
+
+    <!-- ✅ OPTIONAL SECONDARY ACTION AREA -->
+    <div class="management-row">
+        <p class="management-lead">Quick actions:</p>
+
+        <div class="management-actions">
+            <a class="management-btn"
+               href="/inv/add-classification">
+                + Add Classification
+            </a>
+            <a class="management-btn"
+               href="/inv/add-inventory">
+                🚗 Add Inventory
+            </a>
+        </div>
+    </div>
+</section>
+
+<script defer
+        src="/js/inventory.js"></script>
