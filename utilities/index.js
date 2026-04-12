@@ -1,54 +1,59 @@
-const invModel = require("../models/inventory-model");
+const invModel = require("../models/inventory-model")
 
-const Util = {};
+const Util = {}
 
 /* ===== NAVIGATION ===== */
 Util.getNav = async function () {
-  const data = await invModel.getClassifications(); // ✅ already an array
+  const result = await invModel.getClassifications()
+  const data = result.rows || result   // ✅ handles BOTH cases safely
 
-  let list = "<ul>";
-  list += '<li><a href="/">Home</a></li>';
+  let list = "<ul>"
+  list += '<li><a href="/">Home</a></li>'
 
   data.forEach((row) => {
     list += `<li>
       <a href="/inv/type/${row.classification_id}">
         ${row.classification_name}
       </a>
-    </li>`;
-  });
+    </li>`
+  })
 
-  list += "</ul>";
-  return list;
-};
+  list += "</ul>"
+  return list
+}
 
 /* ===== CLASSIFICATION SELECT LIST ===== */
 Util.buildClassificationList = async function (classification_id = null) {
-  const data = await invModel.getClassifications(); // ✅ array
+  const result = await invModel.getClassifications()
+  const data = result.rows || result   // ✅ FIX
 
-  let list = '<select name="classification_id" id="classificationList" required>';
-  list += '<option value="">Choose a Classification</option>';
+  let list = '<select name="classification_id" id="classificationList" required>'
+  list += '<option value="">Choose a Classification</option>'
 
   data.forEach((row) => {
-    list += `<option value="${row.classification_id}"`;
+    list += `<option value="${row.classification_id}"`
 
-    if (classification_id != null && row.classification_id == classification_id) {
-      list += " selected";
+    if (
+      classification_id != null &&
+      row.classification_id == classification_id
+    ) {
+      list += " selected"
     }
 
-    list += `>${row.classification_name}</option>`;
-  });
+    list += `>${row.classification_name}</option>`
+  })
 
-  list += "</select>";
-  return list;
-};
+  list += "</select>"
+  return list
+}
 
 /* ===== CLASSIFICATION GRID ===== */
 Util.buildClassificationGrid = async function (data) {
   if (!data || data.length === 0) {
-    return '<p class="notice">Sorry, no matching vehicles could be found.</p>';
+    return '<p class="notice">Sorry, no matching vehicles could be found.</p>'
   }
 
-  let grid = '<ul id="inv-display">';
+  let grid = '<ul id="inv-display">'
 
   data.forEach((vehicle) => {
     grid += `<li>
@@ -63,17 +68,17 @@ Util.buildClassificationGrid = async function (data) {
         </h2>
         <span>$${new Intl.NumberFormat("en-US").format(vehicle.inv_price)}</span>
       </div>
-    </li>`;
-  });
+    </li>`
+  })
 
-  grid += "</ul>";
-  return grid;
-};
+  grid += "</ul>"
+  return grid
+}
 
 /* ===== VEHICLE DETAIL HTML ===== */
 Util.buildVehicleDetail = function (vehicle) {
   if (!vehicle) {
-    return "<p class='notice'>Sorry, vehicle details could not be found.</p>";
+    return "<p class='notice'>Sorry, vehicle details could not be found.</p>"
   }
 
   return `
@@ -90,14 +95,14 @@ Util.buildVehicleDetail = function (vehicle) {
     </ul>
     <p class="vehicle-desc">${vehicle.inv_description}</p>
   </div>
-  `;
-};
+  `
+}
 
 /* ===== ERROR HANDLER MIDDLEWARE ===== */
 Util.handleErrors = function (fn) {
   return function (req, res, next) {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
+    Promise.resolve(fn(req, res, next)).catch(next)
+  }
+}
 
-module.exports = Util;
+module.exports = Util

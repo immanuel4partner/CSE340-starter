@@ -1,6 +1,6 @@
 <div class="auth-wrapper inv-form-card">
 
-    <!-- MATCH LOGIN HEADER -->
+    <!-- HEADER -->
     <div class="auth-header">
         <h1><%= title %></h1>
 
@@ -25,10 +25,11 @@
         </p>
     </div>
 
-    <!-- FORM (MATCH LOGIN CLASS) -->
-    <form action="/inv/add-inventory"
+    <!-- FORM -->
+    <form action="/inv/update/"
           method="post"
-          class="account-form">
+          class="account-form"
+          id="updateForm">
 
         <div class="inv-form-grid">
 
@@ -124,10 +125,22 @@
 
         </div>
 
+        <!-- ACTIONS -->
         <div class="inv-form-actions">
-            <button type="submit">Add Inventory</button>
+            <button type="submit"
+                    disabled>Update Inventory</button>
+
+            <!-- 🔑 HIDDEN ID (CRITICAL FOR UPDATE) -->
+            <input type="hidden"
+                   name="inv_id"
+                   <% if(locals.inv_id) { %>
+                   value="<%= locals.inv_id %>"
+                   <% } %>>
         </div>
 
     </form>
 
 </div>
+
+<!-- ✅ LINK YOUR JS FILE -->
+<script src="/js/inv-update.js"></script>

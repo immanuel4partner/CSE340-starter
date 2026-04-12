@@ -1,25 +1,26 @@
 const utilities = require("../utilities")
 const accountModel = require("../models/account-model")
 const bcrypt = require("bcryptjs")
-
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 /* ****************************************
  *  Deliver login view
- * *************************************** */
+ **************************************** */
 async function buildLogin(req, res) {
   const nav = await utilities.getNav()
   res.render("account/login", {
     title: "Login",
     nav,
     account_email: "",
-    errors: null,
+    errors: [],
+    pageClass: "login-page",
   })
 }
 
-
 /* ****************************************
  *  Deliver registration view
- * *************************************** */
+ **************************************** */
 async function buildRegister(req, res) {
   const nav = await utilities.getNav()
   res.render("account/register", {
@@ -28,17 +29,27 @@ async function buildRegister(req, res) {
     account_firstname: "",
     account_lastname: "",
     account_email: "",
+    errors: [],
+  })
+}
+
+/* ****************************************
+ *  Deliver account management view
+ **************************************** */
+async function buildAccountManagement(req, res) {
+  const nav = await utilities.getNav()
+  res.render("account/management", {
+    title: "Account Management",
+    nav,
     errors: null,
   })
 }
 
-
 /* ****************************************
  *  Process Registration
- * *************************************** */
+ **************************************** */
 async function registerAccount(req, res) {
   const nav = await utilities.getNav()
-
   const {
     account_firstname,
     account_lastname,
@@ -47,50 +58,21 @@ async function registerAccount(req, res) {
   } = req.body
 
   try {
-    // =========================
-    // Validate input
-    // =========================
-    if (
-      !account_firstname ||
-      !account_lastname ||
-      !account_email ||
-      !account_password
-    ) {
-      req.flash("error", "All fields are required.")
-      return res.render("account/register", {
-        title: "Register",
-        nav,
-        account_firstname,
-        account_lastname,
-        account_email,
-        errors: null,
-      })
-    }
-
-    // =========================
-    // Check if email exists
-    // =========================
     const existingAccount = await accountModel.getAccountByEmail(account_email)
+
     if (existingAccount) {
-      req.flash("error", "Email already exists.")
       return res.render("account/register", {
         title: "Register",
         nav,
         account_firstname,
         account_lastname,
         account_email,
-        errors: null,
+        errors: ["Email already exists."],
       })
     }
 
-    // =========================
-    // Hash password
-    // =========================
     const hashedPassword = await bcrypt.hash(account_password, 10)
 
-    // =========================
-    // Save to database
-    // =========================
     const regResult = await accountModel.registerAccount(
       account_firstname,
       account_lastname,
@@ -98,106 +80,120 @@ async function registerAccount(req, res) {
       hashedPassword
     )
 
-    // =========================
-    // Success
-    // =========================
     if (regResult) {
-      req.flash(
-        "success",
-        `Congratulations, ${account_firstname}, you're registered! Please log in.`
-      )
+      req.flash("notice", `Welcome ${account_firstname}, please login.`)
 
-      return res.status(201).render("account/login", {
+      return res.render("account/login", {
         title: "Login",
         nav,
         account_email,
-        errors: null,
+        errors: [],
+        pageClass: "login-page",
       })
     }
 
     throw new Error("Registration failed")
-
   } catch (error) {
-    console.error("REGISTER ERROR:", error.message)
+    console.error(error)
 
-    req.flash("error", "Registration failed. Please try again.")
-    return res.status(500).render("account/register", {
+    return res.render("account/register", {
       title: "Register",
       nav,
       account_firstname,
       account_lastname,
       account_email,
-      errors: null,
+      errors: ["Registration failed."],
     })
   }
 }
 
-
 /* ****************************************
- *  Process Login
- * *************************************** */
-async function loginAccount(req, res) {
+ *  Process Login (JWT + Cookie)
+ **************************************** */
+async function accountLogin(req, res) {
   const nav = await utilities.getNav()
-
   const { account_email, account_password } = req.body
 
   try {
-    // =========================
-    // Find account
-    // =========================
     const accountData = await accountModel.getAccountByEmail(account_email)
 
     if (!accountData) {
-      req.flash("error", "Invalid email or password.")
-      return res.render("account/login", {
+      req.flash("notice", "Invalid credentials")
+
+      return res.status(400).render("account/login", {
         title: "Login",
         nav,
+        errors: [],
         account_email,
-        errors: null,
+        pageClass: "login-page",
       })
     }
 
-    // =========================
-    // Compare password
-    // =========================
     const isMatch = await bcrypt.compare(
       account_password,
       accountData.account_password
     )
 
     if (!isMatch) {
-      req.flash("error", "Invalid email or password.")
-      return res.render("account/login", {
+      req.flash("notice", "Invalid credentials")
+
+      return res.status(400).render("account/login", {
         title: "Login",
         nav,
+        errors: [],
         account_email,
-        errors: null,
+        pageClass: "login-page",
       })
     }
 
-    // =========================
-    // Success
-    // =========================
-    req.flash("success", `Welcome back, ${accountData.account_firstname}!`)
-    return res.redirect("/account/login")
+    // ✅ Remove password before creating token
+    delete accountData.account_password
 
+    // ✅ SAFER JWT PAYLOAD (important improvement)
+    const payload = {
+      account_id: accountData.account_id,
+      account_email: accountData.account_email,
+      account_type: accountData.account_type,
+    }
+
+    const accessToken = jwt.sign(
+      payload,
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: 3600 }
+    )
+
+    // ✅ Set cookie
+    res.cookie("jwt", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      maxAge: 3600 * 1000,
+    })
+
+    req.flash("notice", "Login successful!")
+
+    return res.redirect("/account/")
   } catch (error) {
-    console.error("LOGIN ERROR:", error.message)
+    console.error(error)
 
-    req.flash("error", "Login failed. Please try again.")
-    return res.render("account/login", {
+    req.flash("notice", "Login failed. Please try again.")
+
+    return res.status(500).render("account/login", {
       title: "Login",
       nav,
+      errors: [],
       account_email,
-      errors: null,
+      pageClass: "login-page",
     })
   }
 }
 
-
+/* ****************************************
+ *  EXPORTS
+ **************************************** */
 module.exports = {
   buildLogin,
   buildRegister,
+  buildAccountManagement,
   registerAccount,
-  loginAccount,
+  accountLogin,
 }

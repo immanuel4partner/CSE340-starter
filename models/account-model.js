@@ -13,7 +13,7 @@ async function registerAccount(
     const sql = `INSERT INTO account
       (account_firstname, account_lastname, account_email, account_password, account_type)
       VALUES ($1, $2, $3, $4, 'Client')
-      RETURNING *`
+      RETURNING account_id, account_firstname, account_lastname, account_email, account_type`
 
     const result = await pool.query(sql, [
       account_firstname,
@@ -29,21 +29,30 @@ async function registerAccount(
   }
 }
 
-
 /* *****************************
  * Get account by email
  * *************************** */
 async function getAccountByEmail(account_email) {
   try {
-    const sql = "SELECT * FROM account WHERE account_email = $1"
+    const sql = `
+      SELECT 
+        account_id, 
+        account_firstname, 
+        account_lastname, 
+        account_email, 
+        account_type, 
+        account_password 
+      FROM account 
+      WHERE account_email = $1
+    `
     const result = await pool.query(sql, [account_email])
+
     return result.rows[0]
   } catch (error) {
     console.error("DB Email Lookup Error:", error)
     return null
   }
 }
-
 
 module.exports = {
   registerAccount,

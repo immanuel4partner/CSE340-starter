@@ -28,16 +28,19 @@
         Select a classification to see the inventory items in that classification.
     </p>
 
-    <!-- ✅ SAFE DROPDOWN RENDER -->
+    <!-- ✅ DROPDOWN (CRITICAL FOR JS) -->
     <div class="management-select">
-        <%- (typeof classificationSelect !== "undefined" && classificationSelect) ? classificationSelect : "" %>
+        <%- classificationSelect %>
     </div>
 
     <!-- ✅ INVENTORY TABLE -->
     <table id="inventoryDisplay">
-        <!-- JS will populate this -->
+        <tr>
+            <td>Select a classification to view inventory.</td>
+        </tr>
     </table>
 
+    <!-- ✅ NO JS FALLBACK -->
     <noscript>JavaScript must be enabled to use this page.</noscript>
 
     <!-- ✅ OPTIONAL SECONDARY ACTION AREA -->
@@ -57,5 +60,5 @@
     </div>
 </section>
 
-<script defer
-        src="/js/inventory.js"></script>
+<!-- ✅ JS FILE (FIXED PATH + REMOVED DEFER FOR RELIABILITY) -->
+<script src="/js/inventory.js"></script>

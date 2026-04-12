@@ -7,7 +7,7 @@ require("dotenv").config()
 const app = express()
 const path = require("path")
 const expressLayouts = require("express-ejs-layouts")
-const pool = require("./database/") 
+const pool = require("./database/")
 const staticRoutes = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
@@ -15,11 +15,15 @@ const accountRoute = require("./routes/accountRoute")
 const utilities = require("./utilities/")
 const flash = require("connect-flash")
 const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser")
+const jwt = require("jsonwebtoken")
+
 /* ***********************
  * Middleware to parse POST data
  *************************/
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cookieParser()) // JWT cookies parsed here
 
 /* ***********************
  * Static Files
@@ -44,24 +48,45 @@ app.set("layout", "./layouts/layout")
 /* ***********************
  * Session and Flash Setup
  *************************/
-app.use(session({
-  store: new (require("connect-pg-simple")(session))({
-    createTableIfMissing: true,
-    pool,
-  }),
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  name: "sessionId",
-}))
+app.use(
+  session({
+    store: new (require("connect-pg-simple")(session))({
+      createTableIfMissing: true,
+      pool,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    name: "sessionId",
+  })
+)
 
 app.use(flash())
 
-// Make flash messages available to all views
+// Make flash messages available to all views and convert objects to strings
 app.use((req, res, next) => {
   res.locals.messages = req.flash()
   next()
 })
+
+
+/* ***********************
+ * JWT Authorization Middleware
+ *************************/
+function requireAuth(req, res, next) {
+  const token = req.cookies.jwt
+  if (!token) return res.status(401).send("Access denied. No token provided.")
+
+  try {
+    const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    req.user = verified
+    res.locals.loggedin = true
+    next()
+  } catch (err) {
+    res.clearCookie("jwt")
+    return res.redirect("/account/login")
+  }
+}
 
 /* ***********************
  * Routes
@@ -70,6 +95,13 @@ app.use(staticRoutes)
 app.use("/account", accountRoute)
 app.use("/inv", inventoryRoute)
 app.get("/", utilities.handleErrors(baseController.buildHome))
+
+/* ***********************
+ * Example Protected Route
+ *************************/
+app.get("/dashboard", requireAuth, (req, res) => {
+  res.send(`Welcome to the dashboard, ${req.user.account_email}!`)
+})
 
 /* **********************
  * 404 - File not found route

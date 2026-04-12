@@ -1,0 +1,114 @@
+<section class="inv-form-card">
+    <h1><%= title %></h1>
+
+    <!-- ✅ SINGLE FLASH MESSAGE (SAFE) -->
+    <% if (flash && flash.notice && flash.notice.length > 0) { %>
+    <div class="notice">
+        <%= flash.notice[0] %>
+    </div>
+    <% } %>
+
+    <!-- ✅ SAFE ERROR HANDLING -->
+    <% if (errors && Array.isArray(errors) && errors.length > 0) { %>
+    <ul class="notice">
+        <% errors.forEach(e => { %>
+        <li><%= e.msg %></li>
+        <% }) %>
+    </ul>
+    <% } %>
+
+    <form action="/inv/update/"
+          method="post"
+          id="updateForm">
+
+        <!-- ✅ REQUIRED: INVENTORY ID -->
+        <input type="hidden"
+               name="inv_id"
+               value="<%= inv_id %>">
+
+        <div class="inv-form-grid">
+
+            <div class="form-field">
+                <label>Classification</label>
+                <%- classificationSelect %>
+            </div>
+
+            <div class="form-field">
+                <label for="inv_make">Make</label>
+                <input id="inv_make"
+                       name="inv_make"
+                       required
+                       value="<%= inv_make %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_model">Model</label>
+                <input id="inv_model"
+                       name="inv_model"
+                       required
+                       value="<%= inv_model %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_year">Year</label>
+                <input id="inv_year"
+                       name="inv_year"
+                       required
+                       pattern="^[0-9]{4}$"
+                       value="<%= inv_year %>">
+            </div>
+
+            <div class="form-field form-field-full">
+                <label for="inv_description">Description</label>
+                <textarea id="inv_description"
+                          name="inv_description"
+                          required><%= inv_description %></textarea>
+            </div>
+
+            <!-- Hidden image fields -->
+            <input type="hidden"
+                   name="inv_image"
+                   value="<%= inv_image %>">
+
+            <input type="hidden"
+                   name="inv_thumbnail"
+                   value="<%= inv_thumbnail %>">
+
+            <div class="form-field">
+                <label for="inv_price">Price</label>
+                <input id="inv_price"
+                       name="inv_price"
+                       required
+                       value="<%= inv_price %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_miles">Miles</label>
+                <input id="inv_miles"
+                       name="inv_miles"
+                       required
+                       pattern="^[0-9]+$"
+                       value="<%= inv_miles %>">
+            </div>
+
+            <div class="form-field">
+                <label for="inv_color">Color</label>
+                <input id="inv_color"
+                       name="inv_color"
+                       required
+                       value="<%= inv_color %>">
+            </div>
+
+        </div>
+
+        <div class="inv-form-actions">
+            <!-- ✅ DISABLED UNTIL CHANGE -->
+            <button type="submit"
+                    disabled>Update Vehicle</button>
+        </div>
+
+    </form>
+</section>
+
+<!-- ✅ LINK JS (REQUIRED FOR STEP 3) -->
+<script src="/js/inv-update.js"></script>

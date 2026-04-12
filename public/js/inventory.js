@@ -3,35 +3,41 @@
 // ================================
 // GET ELEMENTS (SAFE)
 // ================================
-const classificationList = document.querySelector("#classification_id")
+const classificationList = document.querySelector("#classificationList")
 const inventoryDisplay = document.querySelector("#inventoryDisplay")
 
 // ================================
-// EVENT LISTENER (SAFE)
+// EVENT LISTENER (SAFE + ROBUST)
 // ================================
 if (classificationList && inventoryDisplay) {
-  classificationList.addEventListener("change", async function () {
-    const classification_id = classificationList.value
 
-    // Prevent empty selection crash
+  classificationList.addEventListener("change", async function () {
+
+    const classification_id = classificationList.value
+    console.log(`classification_id is: ${classification_id}`)
+
+    // Prevent empty selection
     if (!classification_id) {
-      inventoryDisplay.innerHTML = ""
+      inventoryDisplay.innerHTML = `
+        <tr>
+          <td colspan="3">Select a classification to view inventory.</td>
+        </tr>
+      `
       return
     }
-
-    console.log(`Selected classification: ${classification_id}`)
 
     const url = `/inv/getInventory/${classification_id}`
 
     try {
       const response = await fetch(url)
 
-      // ✅ HANDLE SERVER ERRORS
+      // Handle HTTP errors
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`)
       }
 
       const data = await response.json()
+      console.log("Inventory data:", data)
 
       buildInventoryList(data)
 
@@ -48,14 +54,14 @@ if (classificationList && inventoryDisplay) {
 }
 
 // ================================
-// BUILD TABLE
+// BUILD TABLE FUNCTION
 // ================================
 function buildInventoryList(data) {
 
-  // CLEAR TABLE FIRST
+  // Clear table first
   inventoryDisplay.innerHTML = ""
 
-  // NO DATA CASE
+  // No data case
   if (!data || data.length === 0) {
     inventoryDisplay.innerHTML = `
       <tr>
@@ -65,7 +71,7 @@ function buildInventoryList(data) {
     return
   }
 
-  // TABLE HEADER
+  // Build table header + body
   let table = `
     <thead>
       <tr>
@@ -77,23 +83,25 @@ function buildInventoryList(data) {
     <tbody>
   `
 
-  // TABLE ROWS
+  // Build rows
   data.forEach(vehicle => {
+    console.log(vehicle.inv_id + ", " + vehicle.inv_model)
+
     table += `
       <tr>
         <td>${vehicle.inv_make} ${vehicle.inv_model}</td>
         <td>
-          <a href="/inv/edit/${vehicle.inv_id}" class="table-link">Modify</a>
+          <a href="/inv/edit/${vehicle.inv_id}" title="Click to update">Modify</a>
         </td>
         <td>
-          <a href="/inv/delete/${vehicle.inv_id}" class="table-link delete">Delete</a>
+          <a href="/inv/delete/${vehicle.inv_id}" title="Click to delete">Delete</a>
         </td>
       </tr>
     `
   })
 
-  table += "</tbody>"
+  table += `</tbody>`
 
-  // INSERT INTO TABLE
+  // Inject into DOM
   inventoryDisplay.innerHTML = table
 }

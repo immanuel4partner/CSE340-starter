@@ -1,10 +1,12 @@
 <div id="messages"
      role="alert"
      aria-live="polite">
-  <% if (messages) { %>
+  <% if (typeof messages !== 'undefined' && Object.keys(messages).length > 0) { %>
   <% Object.keys(messages).forEach(function(type) { %>
   <% messages[type].forEach(function(msg) { %>
-  <div class="flash flash--<%= type %>"><%= msg %></div>
+  <div class="flash flash--<%= type %>">
+    <%= msg %>
+  </div>
   <% }) %>
   <% }) %>
   <% } %>

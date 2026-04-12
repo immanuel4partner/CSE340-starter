@@ -1,29 +1,30 @@
 const express = require("express")
 const router = express.Router()
+const regValidate = require("../utilities/account-validation")
 const accountController = require("../controllers/accountController")
 const utilities = require("../utilities")
 
+// ==============================
+// DEFAULT ACCOUNT ROUTE
+// ==============================
+// After login, user comes here
+router.get(
+  "/",
+  utilities.handleErrors(accountController.buildAccountManagement)
+)
 
-// Route for /account (redirects to login)
-router.get("/", (req, res) => {
-  return res.redirect("/account/login");
-});
 
 // ==============================
 // GET Routes (Display Views)
 // ==============================
 
-// Route to deliver the login page
-// When the user visits /account/login in the browser,
-// this calls the buildLogin controller to render the login view
+// Login page
 router.get(
   "/login",
   utilities.handleErrors(accountController.buildLogin)
 )
 
-// Route to deliver the registration page
-// When the user visits /account/register,
-// this calls the buildRegister controller to render the register view
+// Register page
 router.get(
   "/register",
   utilities.handleErrors(accountController.buildRegister)
@@ -34,20 +35,19 @@ router.get(
 // POST Routes (Process Form Data)
 // ==============================
 
-// Route to handle registration form submission
-// When the user submits the registration form (method="post"),
-// data is sent to /account/register and processed by registerAccount
+// Handle registration
 router.post(
   "/register",
+  regValidate.registerRules(),
+  regValidate.checkRegData,
   utilities.handleErrors(accountController.registerAccount)
 )
-
-// Route to handle login form submission
-// When the user submits the login form (method="post"),
-// data is sent to /account/login and processed by loginAccount
+// Handle login
 router.post(
   "/login",
-  utilities.handleErrors(accountController.loginAccount)
+  regValidate.loginRules(),
+  regValidate.checkLoginData,
+  utilities.handleErrors(accountController.accountLogin)
 )
 
 module.exports = router
