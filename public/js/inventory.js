@@ -1,107 +1,103 @@
-'use strict'
+'use strict';
 
-// ================================
-// GET ELEMENTS (SAFE)
-// ================================
-const classificationList = document.querySelector("#classificationList")
-const inventoryDisplay = document.querySelector("#inventoryDisplay")
+document.addEventListener("DOMContentLoaded", () => {
 
-// ================================
-// EVENT LISTENER (SAFE + ROBUST)
-// ================================
-if (classificationList && inventoryDisplay) {
+  // ================================
+  // GET ELEMENTS
+  // ================================
+  const classificationList = document.querySelector("#classificationList");
+  const inventoryDisplay = document.querySelector("#inventoryDisplay");
 
-  classificationList.addEventListener("change", async function () {
+  if (!classificationList || !inventoryDisplay) {
+    console.error("Missing required DOM elements");
+    return;
+  }
 
-    const classification_id = classificationList.value
-    console.log(`classification_id is: ${classification_id}`)
+  // ================================
+  // EVENT LISTENER
+  // ================================
+  classificationList.addEventListener("change", async () => {
 
-    // Prevent empty selection
+    const classification_id = classificationList.value;
+    console.log("Selected classification_id:", classification_id);
+
+    // Empty selection
     if (!classification_id) {
       inventoryDisplay.innerHTML = `
         <tr>
           <td colspan="3">Select a classification to view inventory.</td>
         </tr>
-      `
-      return
+      `;
+      return;
     }
 
-    const url = `/inv/getInventory/${classification_id}`
-
     try {
-      const response = await fetch(url)
+      const response = await fetch(`/inv/getInventory/${classification_id}`);
 
-      // Handle HTTP errors
       if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`)
+        throw new Error(`HTTP error: ${response.status}`);
       }
 
-      const data = await response.json()
-      console.log("Inventory data:", data)
+      const data = await response.json();
+      console.log("Inventory data:", data);
 
-      buildInventoryList(data)
+      renderInventoryTable(data);
 
-    } catch (error) {
-      console.error("Fetch error:", error)
+    } catch (err) {
+      console.error("Fetch error:", err);
 
       inventoryDisplay.innerHTML = `
         <tr>
           <td colspan="3">⚠️ Failed to load inventory data</td>
         </tr>
-      `
+      `;
     }
-  })
-}
+  });
 
-// ================================
-// BUILD TABLE FUNCTION
-// ================================
-function buildInventoryList(data) {
+  // ================================
+  // RENDER TABLE
+  // ================================
+  function renderInventoryTable(data) {
 
-  // Clear table first
-  inventoryDisplay.innerHTML = ""
+    inventoryDisplay.innerHTML = "";
 
-  // No data case
-  if (!data || data.length === 0) {
-    inventoryDisplay.innerHTML = `
-      <tr>
-        <td colspan="3">No vehicles found in this classification.</td>
-      </tr>
-    `
-    return
+    if (!data || data.length === 0) {
+      inventoryDisplay.innerHTML = `
+        <tr>
+          <td colspan="3">No vehicles found in this classification.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    let table = `
+      <thead>
+        <tr>
+          <th>Vehicle Name</th>
+          <th>Modify</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    data.forEach(vehicle => {
+      table += `
+        <tr>
+          <td>${vehicle.inv_make} ${vehicle.inv_model}</td>
+          <td>
+            <a href="/inv/edit/${vehicle.inv_id}">Modify</a>
+          </td>
+          <td>
+            <a href="/inv/delete/${vehicle.inv_id}">Delete</a>
+          </td>
+        </tr>
+      `;
+    });
+
+    table += `</tbody>`;
+
+    inventoryDisplay.innerHTML = table;
   }
 
-  // Build table header + body
-  let table = `
-    <thead>
-      <tr>
-        <th>Vehicle Name</th>
-        <th>Modify</th>
-        <th>Delete</th>
-      </tr>
-    </thead>
-    <tbody>
-  `
-
-  // Build rows
-  data.forEach(vehicle => {
-    console.log(vehicle.inv_id + ", " + vehicle.inv_model)
-
-    table += `
-      <tr>
-        <td>${vehicle.inv_make} ${vehicle.inv_model}</td>
-        <td>
-          <a href="/inv/edit/${vehicle.inv_id}" title="Click to update">Modify</a>
-        </td>
-        <td>
-          <a href="/inv/delete/${vehicle.inv_id}" title="Click to delete">Delete</a>
-        </td>
-      </tr>
-    `
-  })
-
-  table += `</tbody>`
-
-  // Inject into DOM
-  inventoryDisplay.innerHTML = table
-}
+});

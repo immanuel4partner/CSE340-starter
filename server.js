@@ -1,8 +1,7 @@
-/* ***********************
+/***********************
  * Require Statements
  *************************/
 const express = require("express")
-const session = require("express-session")
 require("dotenv").config()
 const app = express()
 const path = require("path")
@@ -12,45 +11,30 @@ const staticRoutes = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const accountRoute = require("./routes/accountRoute")
+const reviewRoute = require("./routes/reviewRoute") // reviews route
 const utilities = require("./utilities/")
 const flash = require("connect-flash")
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken")
 
-/* ***********************
- * Middleware to parse POST data
+/***********************
+ * Body Parsing
  *************************/
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cookieParser()) // JWT cookies parsed here
 
-/* ***********************
- * Static Files
+/***********************
+ * Cookies
  *************************/
-app.use(express.static(path.join(__dirname, "public")))
+app.use(cookieParser())
 
-/* ***********************
- * Global Variables for Views
- *************************/
-app.use((req, res, next) => {
-  res.locals.loggedin = false
-  next()
-})
-
-/* ***********************
- * View Engine and Templates
- *************************/
-app.set("view engine", "ejs")
-app.use(expressLayouts)
-app.set("layout", "./layouts/layout")
-
-/* ***********************
- * Session and Flash Setup
+/***********************
+ * Session (must come before flash)
  *************************/
 app.use(
-  session({
-    store: new (require("connect-pg-simple")(session))({
+  require("express-session")({
+    store: new (require("connect-pg-simple")(require("express-session")))({
       createTableIfMissing: true,
       pool,
     }),
@@ -61,78 +45,139 @@ app.use(
   })
 )
 
+/***********************
+ * Flash Messages
+ *************************/
 app.use(flash())
 
-// Make flash messages available to all views and convert objects to strings
 app.use((req, res, next) => {
   res.locals.messages = req.flash()
   next()
 })
 
-
-/* ***********************
- * JWT Authorization Middleware
+/***********************
+ * JWT Middleware
  *************************/
-function requireAuth(req, res, next) {
+app.use((req, res, next) => {
   const token = req.cookies.jwt
-  if (!token) return res.status(401).send("Access denied. No token provided.")
+
+  if (!token) {
+    res.locals.loggedin = false
+    res.locals.accountData = null
+    req.session.loggedin = false
+    req.session.accountData = null
+    return next()
+  }
 
   try {
-    const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-    req.user = verified
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+
     res.locals.loggedin = true
-    next()
+    res.locals.accountData = decoded
+
+    req.session.loggedin = true
+    req.session.accountData = decoded
   } catch (err) {
     res.clearCookie("jwt")
-    return res.redirect("/account/login")
-  }
-}
 
-/* ***********************
- * Routes
+    res.locals.loggedin = false
+    res.locals.accountData = null
+
+    req.session.loggedin = false
+    req.session.accountData = null
+  }
+
+  next()
+})
+
+/***********************
+ * Static Files
+ *************************/
+app.use(express.static(path.join(__dirname, "public")))
+
+/***********************
+ * View Engine
+ *************************/
+app.set("view engine", "ejs")
+app.use(expressLayouts)
+app.set("layout", "./layouts/layout")
+
+/***********************
+ * ROUTES
  *************************/
 app.use(staticRoutes)
 app.use("/account", accountRoute)
 app.use("/inv", inventoryRoute)
+
+/**
+ * IMPORTANT:
+ * Your review routes are now under:
+ * http://localhost:5500/reviews/...
+ */
+app.use("/reviews", reviewRoute)
+
+/***********************
+ * HOME ROUTE
+ *************************/
 app.get("/", utilities.handleErrors(baseController.buildHome))
 
-/* ***********************
- * Example Protected Route
+/***********************
+ * AUTH MIDDLEWARE
+ *************************/
+function requireAuth(req, res, next) {
+  const token = req.cookies.jwt
+
+  if (!token) {
+    req.flash("notice", "Please login first.")
+    return res.redirect("/account/login")
+  }
+
+  try {
+    req.user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    next()
+  } catch (err) {
+    res.clearCookie("jwt")
+    req.flash("notice", "Session expired. Please login again.")
+    return res.redirect("/account/login")
+  }
+}
+
+/***********************
+ * TEST ROUTE
  *************************/
 app.get("/dashboard", requireAuth, (req, res) => {
-  res.send(`Welcome to the dashboard, ${req.user.account_email}!`)
+  res.send(`Welcome ${req.user.account_email}`)
 })
 
-/* **********************
- * 404 - File not found route
+/***********************
+ * 404 HANDLER
  *************************/
 app.use((req, res, next) => {
-  next({ status: 404, message: "Sorry, we appear to have lost that page." })
+  next({ status: 404, message: "Sorry, page not found." })
 })
 
-/* ***********************
- * Express Error Handler
+/***********************
+ * GLOBAL ERROR HANDLER
  *************************/
 app.use(async (err, req, res, next) => {
-  let nav = await utilities.getNav()
-  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
+  const nav = await utilities.getNav()
 
-  let message =
-    err.status == 404
-      ? err.message
-      : "Oh no! There was a crash. Maybe try a different route?"
+  console.error(err.message)
 
   res.status(err.status || 500).render("errors/error", {
     title: err.status || "Server Error",
-    message,
+    message: err.status === 404
+      ? err.message
+      : "Something went wrong on the server.",
     nav,
   })
 })
 
-/* ***********************
- * Local Server Information
+/***********************
+ * SERVER START
  *************************/
 const port = process.env.PORT || 5500
+
 app.listen(port, "0.0.0.0", () => {
   console.log(`app listening on port ${port}`)
 })

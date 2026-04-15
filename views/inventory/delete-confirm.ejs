@@ -1,21 +1,17 @@
 <section class="inv-form-card">
     <h1><%= title %></h1>
 
-    <!-- ===== FLASH MESSAGES (SAFE) ===== -->
+    <!-- FLASH -->
     <% if (flash && flash.notice && flash.notice.length) { %>
     <div class="notice"><%= flash.notice[0] %></div>
-    <% } %>
-
-    <% if (flash && flash.success && flash.success.length) { %>
-    <div class="flash flash--success"><%= flash.success[0] %></div>
     <% } %>
 
     <% if (flash && flash.error && flash.error.length) { %>
     <div class="flash flash--error"><%= flash.error[0] %></div>
     <% } %>
 
-    <!-- ===== ERROR DISPLAY ===== -->
-    <% if (errors && errors.length) { %>
+    <!-- ERRORS -->
+    <% if (typeof errors !== "undefined" && errors.length) { %>
     <ul class="notice">
         <% errors.forEach(e => { %>
         <li><%= e.msg %></li>
@@ -25,30 +21,35 @@
 
     <p>Are you sure you want to delete this vehicle? This cannot be undone.</p>
 
-    <!-- ===== VEHICLE DETAILS ===== -->
-    <ul>
-        <li>
-            <strong>Vehicle:</strong>
-            <%= vehicle.inv_make %> <%= vehicle.inv_model %>
-        </li>
+    <!-- VEHICLE DISPLAY -->
+    <div class="vehicle-preview">
 
-        <li>
-            <strong>Year:</strong>
-            <%= vehicle.inv_year %>
-        </li>
+        <!-- IMAGE -->
+        <img src="<%= inv_image %>"
+             alt="<%= inv_make %> <%= inv_model %>"
+             style="max-width:300px;">
 
-        <li>
-            <strong>Price:</strong>
-            <%= vehicle.inv_price %>
-        </li>
-    </ul>
+        <!-- DETAILS -->
+        <ul>
+            <li><strong>Vehicle:</strong> <%= inv_make %> <%= inv_model %></li>
+            <li><strong>Year:</strong> <%= inv_year %></li>
+            <li><strong>Price:</strong> $<%= inv_price %></li>
+            <li><strong>Mileage:</strong> <%= inv_miles %></li>
+            <li><strong>Color:</strong> <%= inv_color %></li>
+        </ul>
 
-    <!-- ===== DELETE FORM ===== -->
+        <% if (inv_description) { %>
+        <p><strong>Description:</strong> <%= inv_description %></p>
+        <% } %>
+
+    </div>
+
+    <!-- FORM -->
     <form action="/inv/delete"
           method="post">
         <input type="hidden"
                name="inv_id"
-               value="<%= vehicle.inv_id %>">
+               value="<%= inv_id %>">
 
         <button type="submit">Confirm Delete</button>
         <a href="/inv/">Cancel</a>

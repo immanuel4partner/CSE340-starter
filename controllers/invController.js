@@ -38,7 +38,56 @@ async function safeClassificationList(selectedId = null) {
 }
 
 /* =========================
-   VEHICLE MANAGEMENT VIEW
+   SAFE INT PARSER
+========================= */
+function safeInt(value) {
+  const num = Number(value);
+  return Number.isInteger(num) ? num : null;
+}
+
+/* =========================
+   INVENTORY BY CLASSIFICATION
+========================= */
+invCont.buildByClassificationId = async (req, res, next) => {
+  try {
+    const classification_id = safeInt(req.params.classification_id);
+
+    if (!classification_id) {
+      req.flash("error", "Invalid classification ID.");
+      return res.redirect("/inv/");
+    }
+
+    const data = await invModel.getInventoryByClassificationId(classification_id);
+    const nav = await safeNav();
+
+    if (!data || data.length === 0) {
+      return res.render("inventory/classification", {
+        title: "No vehicles found",
+        nav,
+        grid: "<p>No vehicles found.</p>",
+        flash: getFlash(req),
+        errors: [],
+      });
+    }
+
+    const grid = await Util.buildClassificationGrid(data);
+
+    res.render("inventory/classification", {
+      title: data[0].classification_name,
+      nav,
+      grid,
+      flash: getFlash(req),
+      errors: [],
+    });
+
+  } catch (error) {
+    console.error("buildByClassificationId error:", error);
+    next(error);
+  }
+};
+
+/* =========================
+   MANAGEMENT VIEW
 ========================= */
 invCont.buildManagement = async (req, res) => {
   const nav = await safeNav();
@@ -65,7 +114,6 @@ invCont.buildAddInventory = async (req, res) => {
     nav,
     classificationSelect,
     errors: [],
-
     inv_make: "",
     inv_model: "",
     inv_year: "",
@@ -75,7 +123,6 @@ invCont.buildAddInventory = async (req, res) => {
     inv_price: "",
     inv_miles: "",
     inv_color: "",
-
     flash: getFlash(req),
   });
 };
@@ -85,18 +132,24 @@ invCont.buildAddInventory = async (req, res) => {
 ========================= */
 invCont.buildEditInventory = async (req, res, next) => {
   try {
-    const inv_id = req.params.inv_id;
+    const inv_id = safeInt(req.params.inv_id);
+
+    if (!inv_id) {
+      req.flash("error", "Invalid vehicle ID.");
+      return res.redirect("/inv/");
+    }
 
     const vehicle = await invModel.getInventoryById(inv_id);
     const nav = await safeNav();
-    const classificationSelect = await safeClassificationList(
-      vehicle?.classification_id
-    );
 
     if (!vehicle) {
       req.flash("error", "Vehicle not found.");
       return res.redirect("/inv/");
     }
+
+    const classificationSelect = await safeClassificationList(
+      vehicle.classification_id
+    );
 
     res.render("inventory/edit-inventory", {
       title: "Edit Vehicle",
@@ -104,7 +157,6 @@ invCont.buildEditInventory = async (req, res, next) => {
       classificationSelect,
       flash: getFlash(req),
       errors: [],
-
       inv_id: vehicle.inv_id,
       inv_make: vehicle.inv_make,
       inv_model: vehicle.inv_model,
@@ -117,8 +169,43 @@ invCont.buildEditInventory = async (req, res, next) => {
       inv_color: vehicle.inv_color,
       classification_id: vehicle.classification_id,
     });
+
   } catch (error) {
     console.error("buildEditInventory error:", error);
+    next(error);
+  }
+};
+
+/* =========================
+   🔥 DETAIL VIEW (ADDED FIX)
+========================= */
+invCont.buildDetailView = async (req, res, next) => {
+  try {
+    const inv_id = safeInt(req.params.inv_id);
+
+    if (!inv_id) {
+      req.flash("error", "Invalid vehicle ID.");
+      return res.redirect("/inv/");
+    }
+
+    const vehicle = await invModel.getInventoryById(inv_id);
+    const nav = await safeNav();
+
+    if (!vehicle) {
+      req.flash("error", "Vehicle not found.");
+      return res.redirect("/inv/");
+    }
+
+    res.render("inventory/detail", {
+      title: `${vehicle.inv_make} ${vehicle.inv_model}`,
+      nav,
+      vehicle,
+      flash: getFlash(req),
+      errors: [],
+    });
+
+  } catch (error) {
+    console.error("buildDetailView error:", error);
     next(error);
   }
 };
@@ -128,15 +215,15 @@ invCont.buildEditInventory = async (req, res, next) => {
 ========================= */
 invCont.updateInventory = async (req, res, next) => {
   try {
-    const inv_id = req.body.inv_id;
+    const inv_id = safeInt(req.body.inv_id);
 
     if (!inv_id) {
-      req.flash("error", "Missing vehicle ID.");
+      req.flash("error", "Invalid vehicle ID.");
       return res.redirect("/inv/");
     }
 
     const result = await invModel.updateInventory(
-      req.body.inv_id,
+      inv_id,
       req.body.inv_make,
       req.body.inv_model,
       req.body.inv_description,
@@ -156,6 +243,7 @@ invCont.updateInventory = async (req, res, next) => {
 
     req.flash("error", "Update failed.");
     return res.redirect(`/inv/edit/${inv_id}`);
+
   } catch (error) {
     console.error("updateInventory error:", error);
     next(error);
@@ -163,75 +251,58 @@ invCont.updateInventory = async (req, res, next) => {
 };
 
 /* =========================
-   DETAIL VIEW
-========================= */
-invCont.buildDetailView = async (req, res, next) => {
-  try {
-    const inv_id = req.params.inv_id;
-    const vehicle = await invModel.getInventoryById(inv_id);
-    const nav = await safeNav();
-
-    if (!vehicle) {
-      return res.render("inventory/detail", {
-        title: "Vehicle Not Found",
-        nav,
-        detailHtml: "<p class='notice'>Vehicle not found.</p>",
-        flash: getFlash(req),
-      });
-    }
-
-    const detailHtml = Util.buildVehicleDetail(vehicle);
-
-    res.render("inventory/detail", {
-      title: `${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
-      nav,
-      detailHtml,
-      flash: getFlash(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/* =========================
-   🚨 DELETE VIEW (FIXED + SAFE)
+   DELETE CONFIRM VIEW
 ========================= */
 invCont.buildDeleteConfirm = async (req, res, next) => {
   try {
-    const inv_id = req.params.inv_id;
+    const inv_id = safeInt(req.params.inv_id);
+
+    if (!inv_id) {
+      req.flash("error", "Invalid vehicle ID.");
+      return res.redirect("/inv/");
+    }
 
     const vehicle = await invModel.getInventoryById(inv_id);
     const nav = await safeNav();
 
-    // ✅ SAFE CHECK (CRITICAL FIX)
     if (!vehicle) {
       req.flash("error", "Vehicle not found.");
       return res.redirect("/inv/");
     }
 
-    const detailHtml = Util.buildVehicleDetail(vehicle);
-
-    return res.render("inventory/delete", {
+    res.render("inventory/delete-confirm", {
       title: "Delete Vehicle",
       nav,
-      vehicle,
-      detailHtml,
       flash: getFlash(req),
       errors: [],
+      inv_id: vehicle.inv_id,
+      inv_make: vehicle.inv_make,
+      inv_model: vehicle.inv_model,
+      inv_year: vehicle.inv_year,
+      inv_price: vehicle.inv_price,
+      inv_image: vehicle.inv_image,
+      inv_miles: vehicle.inv_miles,
+      inv_color: vehicle.inv_color,
+      inv_description: vehicle.inv_description
     });
 
   } catch (error) {
-    console.error("DELETE VIEW ERROR:", error);
+    console.error("buildDeleteConfirm error:", error);
     next(error);
   }
 };
 
 /* =========================
-   DELETE PROCESS
+   DELETE INVENTORY
 ========================= */
 invCont.deleteInventoryItem = async (req, res, next) => {
   try {
-    const { inv_id } = req.body;
+    const inv_id = safeInt(req.body.inv_id);
+
+    if (!inv_id) {
+      req.flash("error", "Invalid vehicle ID.");
+      return res.redirect("/inv/");
+    }
 
     const result = await invModel.deleteInventory(inv_id);
 
@@ -242,26 +313,30 @@ invCont.deleteInventoryItem = async (req, res, next) => {
     }
 
     return res.redirect("/inv/");
+
   } catch (error) {
+    console.error("deleteInventoryItem error:", error);
     next(error);
   }
 };
 
 /* =========================
-   JSON
+   INVENTORY JSON
 ========================= */
 invCont.getInventoryJSON = async (req, res, next) => {
   try {
-    const classification_id = parseInt(req.params.classification_id);
+    const classification_id = safeInt(req.params.classification_id);
+
+    if (!classification_id) {
+      return res.status(400).json({ error: "Invalid classification ID" });
+    }
 
     const data = await invModel.getInventoryByClassificationId(classification_id);
 
-    if (!data) {
-      return next(new Error("No data returned"));
-    }
+    return res.json(data || []);
 
-    return res.json(data);
   } catch (error) {
+    console.error("getInventoryJSON error:", error);
     next(error);
   }
 };

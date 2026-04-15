@@ -1,18 +1,34 @@
+<div class="detail-card-inner">
 
+    <!-- LEFT: IMAGE -->
+    <div class="detail-image">
+        <img src="<%= vehicle.inv_image %>"
+             alt="<%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+    </div>
 
-<main class="detail-page">
+    <!-- RIGHT: INFO -->
+    <div class="detail-info">
 
-    <!-- Page Title -->
-    <section class="page-title-card">
-        <h1><%= title %></h1>
-    </section>
+        <h2 class="vehicle-title">
+            <%= vehicle.inv_year %>
+            <%= vehicle.inv_make %>
+            <%= vehicle.inv_model %>
+        </h2>
 
-    <!-- Vehicle Detail Section -->
-    <section class="detail-card">
-        <div class="detail-card-inner">
-            <%- detailHtml %> <!-- Renders Year, Make, Model, Price, Mileage, Color, Classification, Description -->
+        <ul class="vehicle-specs">
+            <li><strong>Price:</strong> $<%= vehicle.inv_price %></li>
+            <li><strong>Mileage:</strong> <%= vehicle.inv_miles %></li>
+            <li><strong>Color:</strong> <%= vehicle.inv_color %></li>
+            <li><strong>Classification:</strong> <%= vehicle.classification_name %></li>
+        </ul>
+
+        <!-- NARROW DESCRIPTION WRAPPER -->
+        <div class="vehicle-desc-wrap">
+            <div class="vehicle-desc">
+                <p><%= vehicle.inv_description %></p>
+            </div>
         </div>
-    </section>
 
-</main>
+    </div>
 
+</div>

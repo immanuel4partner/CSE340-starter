@@ -98,6 +98,29 @@ Util.buildVehicleDetail = function (vehicle) {
   `
 }
 
+/* ===== AUTHORIZATION MIDDLEWARE (TASK 2) ===== */
+Util.checkEmployeeOrAdmin = function (req, res, next) {
+  const account = res.locals.accountData
+
+  // Not logged in
+  if (!account) {
+    req.flash("notice", "Please log in first.")
+    return res.redirect("/account/login")
+  }
+
+  // Check role
+  if (
+    account.account_type === "Employee" ||
+    account.account_type === "Admin"
+  ) {
+    return next()
+  }
+
+  // Not authorized
+  req.flash("notice", "You do not have permission to access this page.")
+  return res.redirect("/account/login")
+}
+
 /* ===== ERROR HANDLER MIDDLEWARE ===== */
 Util.handleErrors = function (fn) {
   return function (req, res, next) {

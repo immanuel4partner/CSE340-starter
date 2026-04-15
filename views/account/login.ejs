@@ -1,18 +1,29 @@
 <div class="auth-wrapper">
 
-    <!-- Small title strip -->
+    <!-- Header -->
     <div class="auth-header">
         <h1><%= title %></h1>
+
         <p class="form-note">
             <span class="required">*</span> All fields are required.
         </p>
 
-        <!-- ✅ Flash NOTICE messages (from req.flash) -->
-        <% if (locals.flash && locals.flash.notice) { %>
-        <div class="flash flash--error">
+        <!-- ✅ Flash Messages (notice + error support) -->
+        <% if (locals.flash && (locals.flash.notice.length || locals.flash.error.length)) { %>
+        <div class="flash">
+
+            <% if (locals.flash.notice && locals.flash.notice.length) { %>
             <% locals.flash.notice.forEach(function(msg) { %>
-            <p><%= msg %></p>
+            <p class="flash--success"><%= msg %></p>
             <% }) %>
+            <% } %>
+
+            <% if (locals.flash.error && locals.flash.error.length) { %>
+            <% locals.flash.error.forEach(function(msg) { %>
+            <p class="flash--error"><%= msg %></p>
+            <% }) %>
+            <% } %>
+
         </div>
         <% } %>
 
@@ -24,9 +35,10 @@
             <% }) %>
         </div>
         <% } %>
+
     </div>
 
-    <!-- Main form card -->
+    <!-- Login Form -->
     <form class="account-form"
           method="post"
           action="/account/login">
@@ -36,6 +48,7 @@
                id="account_email"
                name="account_email"
                required
+               autocomplete="username"
                value="<%= typeof account_email !== 'undefined' ? account_email : '' %>">
 
         <label for="account_password">Password</label>
@@ -43,11 +56,13 @@
             <input type="password"
                    id="account_password"
                    name="account_password"
-                   required>
+                   required
+                   autocomplete="current-password">
             <button type="button"
                     class="toggle-password">👁️</button>
         </div>
 
+        <!-- Password Help -->
         <div class="password-help">
             <p class="password-title">Password Requirements</p>
             <ul class="password-rules">
@@ -60,7 +75,7 @@
 
         <button type="submit">Login</button>
 
-        <!-- Small footer strip -->
+        <!-- Register Link -->
         <div class="account-alt">
             <p>
                 No account?

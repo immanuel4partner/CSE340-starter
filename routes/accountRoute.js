@@ -30,6 +30,18 @@ router.get(
   utilities.handleErrors(accountController.buildRegister)
 )
 
+// ✅ LOGOUT (FIXED)
+router.get(
+  "/logout",
+  accountController.logoutAccount
+)
+
+// ✅ ACCOUNT UPDATE VIEW
+router.get(
+  "/update/:account_id",
+  utilities.handleErrors(accountController.buildUpdateView)
+)
+
 
 // ==============================
 // POST Routes (Process Form Data)
@@ -42,12 +54,25 @@ router.post(
   regValidate.checkRegData,
   utilities.handleErrors(accountController.registerAccount)
 )
+
 // Handle login
 router.post(
   "/login",
   regValidate.loginRules(),
   regValidate.checkLoginData,
   utilities.handleErrors(accountController.accountLogin)
+)
+
+// ✅ UPDATE ACCOUNT INFO
+router.post(
+  "/update",
+  utilities.handleErrors(accountController.updateAccount)
+)
+
+// ✅ UPDATE PASSWORD
+router.post(
+  "/update-password",
+  utilities.handleErrors(accountController.updatePassword)
 )
 
 module.exports = router
