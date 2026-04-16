@@ -19,7 +19,7 @@ validate.classificationRules = () => {
 };
 
 /* =========================
-   CHECK CLASSIFICATION DATA
+   CLASSIFICATION CHECK
 ========================= */
 validate.checkClassificationData = async (req, res, next) => {
   const errors = validationResult(req);
@@ -27,9 +27,7 @@ validate.checkClassificationData = async (req, res, next) => {
   if (!errors.isEmpty()) {
     const nav = await utilities.getNav();
 
-    req.flash("error", errors.array().map((e) => e.msg));
-
-    return res.render("inventory/add-classification", {
+    return res.status(400).render("inventory/add-classification", {
       title: "Add Classification",
       nav,
       errors: errors.array(),
@@ -45,8 +43,6 @@ validate.checkClassificationData = async (req, res, next) => {
 ========================= */
 validate.inventoryRules = () => {
   return [
-    body("inv_id").optional().isInt(),
-
     body("classification_id")
       .notEmpty()
       .withMessage("Please choose a classification.")
@@ -85,7 +81,7 @@ validate.inventoryRules = () => {
 };
 
 /* =========================
-   CHECK ADD INVENTORY
+   INVENTORY CHECK (ADD)
 ========================= */
 validate.checkInventoryData = async (req, res, next) => {
   const errors = validationResult(req);
@@ -97,13 +93,13 @@ validate.checkInventoryData = async (req, res, next) => {
       req.body.classification_id
     );
 
-    req.flash("error", errors.array().map((e) => e.msg));
-
-    return res.render("inventory/add-inventory", {
+    return res.status(400).render("inventory/add-inventory", {
       title: "Add Inventory",
       nav,
       classificationSelect,
       errors: errors.array(),
+
+      /* sticky form */
       ...req.body,
     });
   }
@@ -112,7 +108,7 @@ validate.checkInventoryData = async (req, res, next) => {
 };
 
 /* =========================
-   🚨 FIXED UPDATE VALIDATION
+   UPDATE VALIDATION CHECK
 ========================= */
 validate.checkUpdateData = async (req, res, next) => {
   const errors = validationResult(req);
@@ -124,35 +120,17 @@ validate.checkUpdateData = async (req, res, next) => {
       req.body.classification_id
     );
 
-    req.flash("error", errors.array().map((e) => e.msg));
-
-    return res.render("inventory/edit-inventory", {
+    return res.status(400).render("inventory/edit-inventory", {
       title: `Edit ${req.body.inv_make} ${req.body.inv_model}`,
       nav,
       classificationSelect,
-
-      /* 🔥 CRITICAL FIX: always include inv_id */
-      inv_id: req.body.inv_id,
-
-      /* flash + errors consistency */
-      flash: {
-        notice: [],
-        error: errors.array().map((e) => e.msg),
-      },
-
       errors: errors.array(),
 
-      /* sticky form data */
-      inv_make: req.body.inv_make,
-      inv_model: req.body.inv_model,
-      inv_year: req.body.inv_year,
-      inv_description: req.body.inv_description,
-      inv_image: req.body.inv_image,
-      inv_thumbnail: req.body.inv_thumbnail,
-      inv_price: req.body.inv_price,
-      inv_miles: req.body.inv_miles,
-      inv_color: req.body.inv_color,
-      classification_id: req.body.classification_id,
+      /* REQUIRED for edit page */
+      inv_id: req.body.inv_id,
+
+      /* sticky form */
+      ...req.body,
     });
   }
 

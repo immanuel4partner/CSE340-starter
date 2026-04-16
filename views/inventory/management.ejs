@@ -1,60 +1,30 @@
-<section class="management-card">
-    <h1><%= title %></h1>
+<%# Unit 4, Select Inv Item activity %>
+<% if (title) {%>
+<h1><%= title %></h1>
+<%} else {res.redirect('/')} %>
 
-    <!-- ✅ SAFE FLASH HANDLING -->
-    <% if (typeof flash !== "undefined" && flash.notice && flash.notice.length > 0) { %>
-    <div class="notice"><%= flash.notice[0] %></div>
-    <% } %>
+<%- messages() %>
 
-    <% if (typeof flash !== "undefined" && flash.error && flash.error.length > 0) { %>
-    <div class="flash flash--error"><%= flash.error[0] %></div>
-    <% } %>
 
-    <!-- ✅ PRIMARY ACTION BUTTONS -->
-    <div class="management-actions">
-        <a class="management-btn" href="/inv/add-classification">
-            ➕ Add New Classification
-        </a>
-        <a class="management-btn" href="/inv/add-inventory">
-            🚗 Add New Vehicle
-        </a>
-    </div>
+<% if (errors) { %>
+<ul class="message warning">
+  <% errors.array().forEach(error => { %>
+  <li><%= error.msg %></li>
+  <%  }) %>
+</ul>
+<% } %>
 
-    <!-- ✅ SECTION HEADER -->
-    <h2>Manage Inventory</h2>
-    <p class="management-lead">
-        Select a classification to see the inventory items in that classification.
-    </p>
+<ul class="boldList">
+  <li><a href="/inv/newClassification/" title="Click to add a new vehicle classification">Add New Classification</a></li>
+  <li><a href="/inv/newVehicle/" title="Click to add a new vehicle">Add New Vehicle</a></li>
+</ul>
 
-    <!-- ✅ DROPDOWN (CRITICAL FOR JS) -->
-    <div class="management-select">
-        <%- classificationSelect %>
-    </div>
+<h2>Manage Inventory</h2>
+<p>Choose a classification to see those inventory items.</p>
+<%- classificationSelect %>
 
-    <!-- ✅ INVENTORY TABLE -->
-    <table id="inventoryDisplay">
-        <tr>
-            <td>Select a classification to view inventory.</td>
-        </tr>
-    </table>
+<table id="inventoryDisplay"></table>
 
-    <!-- ✅ NO JS FALLBACK -->
-    <noscript>JavaScript must be enabled to use this page.</noscript>
+<noscript>JavaScript must be enabled to use this page.</noscript>
 
-    <!-- ✅ OPTIONAL SECONDARY ACTION AREA -->
-    <div class="management-row">
-        <p class="management-lead">Quick actions:</p>
-
-        <div class="management-actions">
-            <a class="management-btn" href="/inv/add-classification">
-                + Add Classification
-            </a>
-            <a class="management-btn" href="/inv/add-inventory">
-                🚗 Add Inventory
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- ✅ JS FILE (FIXED PATH + REMOVED DEFER FOR RELIABILITY) -->
-<script src="/js/inventory.js"></script>
+<script src="../../js/inventory.js"></script>

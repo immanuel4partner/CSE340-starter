@@ -1,146 +1,55 @@
-<div class="auth-wrapper inv-form-card">
+<%# Unit 4, Assignment 4, Task 3 %>
+<% if (title) {%>
+<h1>
+  <%= title %>
+</h1>
+<%} else {res.redirect('/')} %>
 
-    <!-- HEADER -->
-    <div class="auth-header">
-        <h1><%= title %></h1>
+<%- messages() %>
 
-        <% if (flash && flash.notice && flash.notice.length > 0) { %>
-        <div class="notice"><%= flash.notice[0] %></div>
-        <% } %>
+<% if (errors) { %>
+<ul class="message warning">
+  <% errors.array().forEach(error => { %>
+  <li><%= error.msg %></li>
+  <%  }) %>
+</ul>
+<% } %>
 
-        <% if (flash && flash.error && flash.error.length > 0) { %>
-        <div class="flash flash--error"><%= flash.error[0] %></div>
-        <% } %>
+<div id="registerContainer">
+  <p>All fields are required.</p>
+  <form action="/inv/addInventory" method="post">
+    <fieldset>
+      <label for="classificationList">Classification</label>
+      <%- classificationSelect %>
 
-        <% if (errors && errors.length > 0) { %>
-        <ul class="notice">
-            <% errors.forEach(e => { %>
-            <li><%= e.msg %></li>
-            <% }) %>
-        </ul>
-        <% } %>
+      <label for="invMake">Make</label>
+      <input type="text" name="inv_make" id="invMake" required minlength="3" placeholder="Min of 3 characters" <% if(locals.inv_make) { %> value="<%= locals.inv_make %>" <% } %>>
 
-        <p class="form-note">
-            <span class="required">*</span> All fields are required.
-        </p>
-    </div>
+      <label for="invModel">Model</label>
+      <input type="text" name="inv_model" id="invModel" required minlength="3" placeholder="Min of 3 characters" <% if(locals.inv_model) { %> value="<%= locals.inv_model %>" <% } %>>
 
-    <!-- FORM -->
-    <form action="/inv/update/"
-          method="post"
-          class="account-form"
-          id="updateForm">
+      <label for="invDescription">Description</label>
+      <textarea id="invDescription" name="inv_description" required><% if(locals.inv_description) { %><%= locals.inv_description %><% } %></textarea>
 
-        <div class="inv-form-grid">
+      <label for="invImage">Image Path</label>
+      <input type="text" name="inv_image" id="invImage" size="30" required <% if(locals.inv_image) { %> value="<%= locals.inv_image %>" <% } else { %> value="/images/vehicles/no-image.png" <% } %>>
 
-            <div class="form-field">
-                <label for="classification_id">Classification</label>
-                <%- typeof classificationSelect !== "undefined"
-                    ? classificationSelect
-                    : "<option disabled>No classifications</option>" %>
-            </div>
+      <label for="invThumbnail">Thumbnail Path</label>
+      <input type="text" name="inv_thumbnail" id="invThumbnail" size="30" required <% if(locals.inv_image) { %> value="<%= locals.inv_image %>" <% } else { %> value="/images/vehicles/no-image.png" <% } %>>
 
-            <div class="form-field">
-                <label for="inv_make">Make</label>
-                <input type="text"
-                       id="inv_make"
-                       name="inv_make"
-                       required
-                       value="<%= inv_make || '' %>">
-            </div>
+      <label for="invPrice">Price</label>
+      <input type="text" name="inv_price" id="invPrice" size="10" placeholder="decimal or integer numbers only" required pattern="^[1-9]\d*(\.\d+)?$" <% if(locals.inv_price) { %> value="<%= locals.inv_price %>" <% } %>>
 
-            <div class="form-field">
-                <label for="inv_model">Model</label>
-                <input type="text"
-                       id="inv_model"
-                       name="inv_model"
-                       required
-                       value="<%= inv_model || '' %>">
-            </div>
+      <label for="invYear">Year</label>
+      <input type="text" name="inv_year" id="invYear" size="10" placeholder="4-digit year" required minlength="4" maxlength="4" pattern="^(19|20)\d{2}$" <% if(locals.inv_year) { %> value="<%= locals.inv_year %>" <% } %>>
 
-            <div class="form-field">
-                <label for="inv_year">Year</label>
-                <input type="number"
-                       id="inv_year"
-                       name="inv_year"
-                       required
-                       min="1900"
-                       max="<%= new Date().getFullYear() %>"
-                       value="<%= inv_year || '' %>">
-            </div>
+      <label for="invMiles">Miles</label>
+      <input type="text" name="inv_miles" id="invMiles" size="10" placeholder="digits only" required pattern="^\d+$" <% if(locals.inv_miles) { %> value="<%= locals.inv_miles %>" <% } %>>
 
-            <div class="form-field">
-                <label for="inv_description">Description</label>
-                <textarea id="inv_description"
-                          name="inv_description"
-                          required><%= inv_description || '' %></textarea>
-            </div>
+      <label for="invColor">Color</label>
+      <input type="text" name="inv_color" id="invColor" required <% if(locals.inv_color) { %> value="<%= locals.inv_color %>" <% } %>>
 
-            <div class="form-field">
-                <label for="inv_image">Image Path</label>
-                <input type="text"
-                       id="inv_image"
-                       name="inv_image"
-                       required
-                       value="<%= inv_image || '/images/vehicles/no-image.png' %>">
-            </div>
-
-            <div class="form-field">
-                <label for="inv_thumbnail">Thumbnail Path</label>
-                <input type="text"
-                       id="inv_thumbnail"
-                       name="inv_thumbnail"
-                       required
-                       value="<%= inv_thumbnail || '/images/vehicles/no-image.png' %>">
-            </div>
-
-            <div class="form-field">
-                <label for="inv_price">Price</label>
-                <input type="number"
-                       step="0.01"
-                       id="inv_price"
-                       name="inv_price"
-                       required
-                       value="<%= inv_price || '' %>">
-            </div>
-
-            <div class="form-field">
-                <label for="inv_miles">Miles</label>
-                <input type="number"
-                       id="inv_miles"
-                       name="inv_miles"
-                       required
-                       min="0"
-                       value="<%= inv_miles || '' %>">
-            </div>
-
-            <div class="form-field">
-                <label for="inv_color">Color</label>
-                <input type="text"
-                       id="inv_color"
-                       name="inv_color"
-                       required
-                       value="<%= inv_color || '' %>">
-            </div>
-
-        </div>
-
-        <!-- ACTIONS -->
-        <div class="inv-form-actions">
-            <button type="submit"
-                    disabled>Update Inventory</button>
-
-            <!-- 🔑 HIDDEN ID (CRITICAL FOR UPDATE) -->
-            <input type="hidden"
-                   name="inv_id"
-                   <% if(locals.inv_id) { %>
-                   value="<%= locals.inv_id %>"
-                   <% } %>>
-        </div>
-
-    </form>
-
+      <button type="submit">Add Vehicle</button>
+    </fieldset>
+  </form>
 </div>
-
-<!-- ✅ LINK YOUR JS FILE -->
-<script src="/js/inv-update.js"></script>

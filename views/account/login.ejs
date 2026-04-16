@@ -1,91 +1,23 @@
-<div class="auth-wrapper">
+<% if (title) { %>
+<h1><%= title %></h1>
+<% } else {
+  res.redirect('/')
+} %>
 
-    <!-- Header -->
-    <div class="auth-header">
-        <h1><%= title %></h1>
+<%- messages() %>
 
-        <p class="form-note">
-            <span class="required">*</span> All fields are required.
-        </p>
-
-        <!-- ✅ Flash Messages (notice + error support) -->
-        <% if (locals.flash && (locals.flash.notice.length || locals.flash.error.length)) { %>
-        <div class="flash">
-
-            <% if (locals.flash.notice && locals.flash.notice.length) { %>
-            <% locals.flash.notice.forEach(function(msg) { %>
-            <p class="flash--success"><%= msg %></p>
-            <% }) %>
-            <% } %>
-
-            <% if (locals.flash.error && locals.flash.error.length) { %>
-            <% locals.flash.error.forEach(function(msg) { %>
-            <p class="flash--error"><%= msg %></p>
-            <% }) %>
-            <% } %>
-
-        </div>
-        <% } %>
-
-        <!-- ✅ Validation Errors -->
-        <% if (errors && errors.length > 0) { %>
-        <div class="flash flash--error">
-            <% errors.forEach(function(err) { %>
-            <p><%= err %></p>
-            <% }) %>
-        </div>
-        <% } %>
-
-    </div>
-
-    <!-- Login Form -->
-    <form class="account-form"
-          method="post"
-          action="/account/login">
-
-        <label for="account_email">Email (Username)</label>
-        <input type="email"
-               id="account_email"
-               name="account_email"
-               required
-               autocomplete="username"
-               value="<%= typeof account_email !== 'undefined' ? account_email : '' %>">
-
-        <label for="account_password">Password</label>
-        <div class="password-field">
-            <input type="password"
-                   id="account_password"
-                   name="account_password"
-                   required
-                   autocomplete="current-password">
-            <button type="button"
-                    class="toggle-password">👁️</button>
-        </div>
-
-        <!-- Password Help -->
-        <div class="password-help">
-            <p class="password-title">Password Requirements</p>
-            <ul class="password-rules">
-                <li>12 characters minimum</li>
-                <li>At least 1 capital letter</li>
-                <li>At least 1 number</li>
-                <li>At least 1 special character</li>
-            </ul>
-        </div>
-
-        <button type="submit">Login</button>
-
-        <!-- Register Link -->
-        <div class="account-alt">
-            <p>
-                No account?
-                <a href="/account/register"
-                   class="auth-link">Register here</a>
-            </p>
-        </div>
-
-    </form>
-
+<div id="loginContainer">
+  <form id="loginForm" action="/account/login" method="post">
+    <fieldset>
+      <label for="email">Email Address:</label>
+      <input type="email" name="account_email" id="email" required value="<%= locals.account_email %>">
+      <label for="password">Password</label>
+      <input type="password" name="account_password" id="password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
+      <div><i>Passwords must be minimum of 12 characters and include 1 capital letter, 1 number and 1 special character.</i></div>
+      <div id="pswdBtn">Show Password</div>
+      <button type="submit">Login</button>
+    </fieldset>
+  </form>
+  <p>No account? <a href="/account/register">Sign-up</a></p>
 </div>
-
-<script src="/js/password-toggle.js"></script>
+<script src="/js/script.js"></script>
