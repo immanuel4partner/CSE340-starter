@@ -1,31 +1,7 @@
 /************************************************
 CSS Styles for CSE Motors
-
-1. General styles
-   1.0 @imports
-   1.1 Box Model
-   1.2 Universal Styles
-   1.3 Header
-   1.4 Navigation
-   1.5 Body
-   1.6 Footer
-2. Component styles
-    2.1 Hero - Home view
-    2.2 Review - Home view
-    2.3 Add-ons - Home view
-    2.4 Forms
-    2.5 Vehicles - Classification view
-    2.6 Vehicle - Detail view
-3. Media Query
-    3.1 General
-    3.2 Header
-    3.3 Navigation
-    3.4 Hero - Home
-    3.5 Review & Add-on - Home
-    3.6 Vehicles - Classification view
-    3.7 Vehicle - Detail view
-
 ************************************************/
+
 @import url('https://fonts.googleapis.com/css2?family=Inter&family=Literata:opsz@7..72&display=swap');
 
 /******* 1.1 Change Box Model ***************/
@@ -192,7 +168,7 @@ body {
 }
 
 #wrapper {
-  width: 95%;
+  width: 75%;
   background-color: transparent;
   margin-left: auto;
   margin-right: auto;
@@ -1482,28 +1458,52 @@ text-align: center;
 
 .content-card {
   width: 95%;
-  max-width: 1100px;
+  max-width: 1200px;
 }
 
 /* =============================
-   HERO SECTION (MODERN FIX)
+   HERO SECTION (FINAL TUNED)
 ============================= */
-
 .hero {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+
   margin-top: 1rem;
+  margin-bottom: 1rem;
+  /* IMPORTANT: reduces big gap */
 }
 
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image img {
+  width: 75%;
+  max-width: 750px;
+  height: auto;
+}
+
+/* Card positioned on headlight */
 .hero-card {
-  background-color: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+
+  background-color: rgba(255, 255, 255, 0.75);
   padding: 1rem;
-  max-width: 300px;
+  max-width: 260px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Keep your original text styles */
 .hero-vehicle {
   color: var(--main-accent);
   margin-bottom: 0.5rem;
@@ -1519,7 +1519,6 @@ text-align: center;
   color: var(--main-accent);
   font-weight: bold;
 }
-
 /* CTA button */
 .btn {
   display: inline-block;
@@ -1546,10 +1545,12 @@ text-align: center;
 
 .lower {
   display: flex;
-  flex-direction: column;
   gap: 2rem;
+  margin-top: 0;
+  /* removes extra space */
+  padding-top: 0;
+  /* removes hidden spacing */
 }
-
 /* =============================
    REVIEWS
 ============================= */
@@ -1644,6 +1645,18 @@ text-align: center;
   .upgrade-grid {
     grid-template-columns: 1fr;
   }
+        @media (max-width: 600px) {
+          .hero-card {
+            position: static;
+            transform: none;
+            margin: 1rem auto;
+          }
+    
+          .hero-image img {
+            width: 100%;
+            /* full width on mobile */
+          }
+        }
 }
   /*#endregion*/
 }
