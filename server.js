@@ -87,6 +87,8 @@ app.use("/inv", inventoryRoute)
 // Account routes - Unit 4, Deliver Login activity
 app.use("/account", accountRoute)
 
+const reviewRoute = require("./routes/reviewRoute")
+app.use("/reviews", reviewRoute)
 
 
 // File Not Found Route - must be last route in list

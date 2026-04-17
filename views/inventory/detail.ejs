@@ -1,16 +1,69 @@
-<%# Unit 3, Assignment 3, Task 1 %>
+<%# Vehicle Detail Page with Reviews %>
+
 <% if (title) { %>
 <h1><%= title %></h1>
-<% } else {
-  res.redirect('/')
-} %>
+<% } else { %>
+<% res.redirect("/") %>
+<% } %>
 
+<% if (htmlData) { %>
 
-
-<% if(Object.entries(htmlData).length > 0){ %>
-
+<!-- ========================= -->
+<!-- VEHICLE DETAILS -->
+<!-- ========================= -->
 <%- htmlData %>
+
+<!-- ========================= -->
+<!-- REVIEWS SECTION -->
+<!-- ========================= -->
+<section class="review-section">
+  <h2>Customer Reviews</h2>
+
+  <% if (reviews && reviews.length > 0) { %>
+  <ul class="review-list">
+    <% reviews.forEach(review => { %>
+    <li class="review-card">
+
+      <strong><%= review.account_firstname %></strong>
+
+      <p>
+        Rating:
+        <%= review.rating ? "★".repeat(review.rating) : "No rating" %>
+      </p>
+
+      <p><%= review.review_text %></p>
+
+      <% if (loggedin && accountData) { %>
+      <% if (
+              accountData.account_id == review.account_id ||
+              accountData.account_type === "Admin"
+            ) { %>
+      <a href="/reviews/edit/<%= review.review_id %>">Edit</a> |
+      <a href="/reviews/delete/<%= review.review_id %>">Delete</a>
+      <% } %>
+      <% } %>
+
+    </li>
+    <% }) %>
+  </ul>
+  <% } else { %>
+  <p>No reviews yet. Be the first!</p>
+  <% } %>
+
+  <!-- ========================= -->
+  <!-- ADD REVIEW BUTTON -->
+  <!-- ========================= -->
+  <% if (loggedin && vehicle) { %>
+  <a href="/reviews/add/<%= vehicle.inv_id %>"
+     class="btn-review">
+    Leave a Review
+  </a>
+  <% } else { %>
+  <p><a href="/account/login">Login</a> to leave a review.</p>
+  <% } %>
+
+</section>
+
 <% } else { %>
 <p class="notice">Sorry, no matching vehicle could be found.</p>
 <% } %>
-
